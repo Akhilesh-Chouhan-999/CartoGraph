@@ -12,6 +12,9 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "check": "npm run type-check && npm run format:check && npm run lint && npm run build"
   },
   "keywords": [],
@@ -37,6 +40,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.4",
+    "@vitest/coverage-v8": "^5.0.3",
     "eslint": "^10.12.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
@@ -44,6 +48,7 @@
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^6.0.0",
-    "typescript-eslint": "^8.71.1"
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^5.0.3"
   }
 }
