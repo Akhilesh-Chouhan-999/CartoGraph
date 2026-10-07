@@ -1,0 +1,59 @@
+:root {
+  color-scheme: light;
+
+  /* CartoGraph interface palette */
+  --page-background: #f4f6f9;
+  --surface-secondary: #f7f8fa;
+  --border: #d9dee7;
+  --border-subtle: #e8ebf0;
+  --primary: #3478e5;
+  --primary-hover: #2466ce;
+  --primary-light: #e6efff;
+  --cyan: #39c4d1;
+  --text-primary: #121a2b;
+  --text-secondary: #465266;
+  --text-muted: #788394;
+  --success: #249760;
+  --warning: #d78334;
+  --error: #d54d52;
+  --graph-entry: #3478e5;
+  --graph-controller: #39bdca;
+  --graph-service: #bc79e8;
+  --graph-repository: #ed934d;
+  --graph-model: #69b583;
+  --graph-other: #aab1bc;
+  --graph-entry-surface: #eaf1ff;
+  --graph-controller-surface: #edfbfc;
+  --graph-service-surface: #fbf4ff;
+  --graph-repository-surface: #fff7f0;
+  --graph-model-surface: #f1faf4;
+  --graph-other-surface: #f6f7f9;
+
+  --ink: var(--text-primary);
+  --muted: var(--text-muted);
+  --line: var(--border-subtle);
+  --canvas: var(--page-background);
+  --blue: var(--primary);
+  --blue-dark: var(--primary-hover);
+  --blue-pale: var(--primary-light);
+  --surface: #fff;
+  --shadow: 0 2px 6px rgb(20 35 60 / 8%);
+
+  --font-sans:
+    Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --text-page-title: 25px;
+  --text-section-title: 17px;
+  --text-card-title: 14px;
+  --text-body: 13px;
+  --text-secondary-size: 12px;
+  --text-metadata: 11px;
+  --text-label: 12px;
+  --text-button: 13px;
+
+  --sidebar-width: 230px;
+  --topbar-height: 58px;
+  --graph-inspector-width: 250px;
+  --page-gutter: 24px;
+  --panel-radius: 7px;
+  --control-radius: 5px;
+}

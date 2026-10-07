@@ -1,21 +1,34 @@
 # Dependencies
 node_modules/
+client/node_modules/
+server/node_modules/
+frontend-design/
 
 # Environment
 .env
 .env.*
 !.env.example
+client/.env
+client/.env.*
+!client/.env.example
+server/.env
+server/.env.*
+!server/.env.example
 
 # Build output
 dist/
 build/
+client/dist/
+server/dist/
+coverage/
+*.tsbuildinfo
+.vite/
+.cache/
 
 # Logs
 *.log
+npm-debug.log*
 logs/
-
-# Coverage
-coverage/
 
 # IDE
 .idea/
@@ -24,3 +37,7 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local tooling
+.docker/
+docker/data/

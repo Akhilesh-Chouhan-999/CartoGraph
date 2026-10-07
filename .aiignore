@@ -1,0 +1,27 @@
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and generated output
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+**/.next/
+**/.cache/
+
+# Local tooling and logs
+.git/
+.idea/
+.vscode/
+**/*.log
+**/logs/
+
+# Generated or data-heavy files
+**/*.min.js
+**/*.map
+**/*.lock
