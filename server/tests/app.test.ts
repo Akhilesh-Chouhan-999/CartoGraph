@@ -1,7 +1,33 @@
+import type { Request, Response } from 'express';
 import { describe, expect, it } from 'vitest';
 
-describe('CartoGraph API', () => {
-  it('should pass the basic test', () => {
-    expect(true).toBe(true);
+import { AppError } from '../src/errors/index.js';
+import { ErrorMiddleware } from '../src/middleware/index.js';
+
+describe('API error handling', () => {
+  it('returns the standard failure response for operational errors', () => {
+    const response = {
+      statusCode: 0,
+      body: undefined as unknown,
+      status(code: number) {
+        this.statusCode = code;
+        return this;
+      },
+      json(body: unknown) {
+        this.body = body;
+        return this;
+      },
+    };
+    const handler = new ErrorMiddleware().handler();
+
+    handler(
+      new AppError('Project not found', 404),
+      {} as Request,
+      response as unknown as Response,
+      () => undefined,
+    );
+
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toEqual({ success: false, message: 'Project not found' });
   });
 });

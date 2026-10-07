@@ -1,6 +1,27 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
-const fileSchema = new Schema(
+export interface FileDocument {
+  analysisId: Types.ObjectId;
+  path: string;
+  language: string;
+  role:
+    | 'entry'
+    | 'controller'
+    | 'service'
+    | 'repository'
+    | 'model'
+    | 'utility'
+    | 'middleware'
+    | 'config'
+    | 'test'
+    | 'unknown';
+  lines: number;
+  fanIn: number;
+  fanOut: number;
+  hash: string;
+}
+
+const fileSchema = new Schema<FileDocument>(
   {
     analysisId: {
       type: Schema.Types.ObjectId,
@@ -67,8 +88,6 @@ const fileSchema = new Schema(
 );
 
 fileSchema.index({ analysisId: 1, path: 1 }, { unique: true });
-
-export type FileDocument = InferSchemaType<typeof fileSchema>;
 
 const FileModel = model<FileDocument>('File', fileSchema);
 

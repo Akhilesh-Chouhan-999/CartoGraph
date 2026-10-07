@@ -1,31 +1,37 @@
 import cors from 'cors';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
-import pinoHttp from 'pino-http';
+import pinoHttpModule from 'pino-http';
 
 import { ErrorMiddleware } from '../middleware/index.js';
 import Logger from '../logger/logger.js';
+import ApiRoutes from '../routes/index.js';
+import type AnalysisQueue from '../queues/analysis.queue.js';
+import { RateLimitMiddleware } from '../middleware/index.js';
+import type { Redis } from 'ioredis';
+
+const pinoHttp = pinoHttpModule.default;
 
 class App {
   private readonly app: Express;
   private readonly errorMiddleware: ErrorMiddleware;
   private readonly logger: Logger;
 
-  constructor() {
+  constructor(queue: AnalysisQueue, redis: Redis, clientUrl: string) {
     this.app = express();
     this.errorMiddleware = new ErrorMiddleware();
     this.logger = new Logger();
 
-    this.initializeMiddleware();
-    this.initializeRoutes();
+    this.initializeMiddleware(clientUrl);
+    this.initializeRoutes(queue, redis);
   }
 
-  private initializeMiddleware(): void {
+  private initializeMiddleware(clientUrl: string): void {
     this.app.use(helmet());
 
     this.app.use(
       cors({
-        origin: process.env.CLIENT_URL || 'http://localhost:5173',
+        origin: clientUrl,
         credentials: true,
       }),
     );
@@ -50,13 +56,15 @@ class App {
     );
   }
 
-  private initializeRoutes(): void {
+  private initializeRoutes(queue: AnalysisQueue, redis: Redis): void {
     this.app.get('/health', (_req, res) => {
       res.status(200).json({
         success: true,
         message: 'CartoGraph API is running',
       });
     });
+
+    this.app.use('/api', new RateLimitMiddleware().general, new ApiRoutes(queue, redis).router);
 
     this.app.use(this.errorMiddleware.notFound());
     this.app.use(this.errorMiddleware.handler());

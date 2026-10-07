@@ -1,6 +1,14 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
-const dependencySchema = new Schema(
+export interface Dependency {
+  analysisId: Types.ObjectId;
+  sourceFileId: Types.ObjectId;
+  targetFileId: Types.ObjectId;
+  type: 'import' | 'export' | 'dynamic-import' | 'require';
+  line?: number;
+}
+
+const dependencySchema = new Schema<Dependency>(
   {
     analysisId: {
       type: Schema.Types.ObjectId,
@@ -49,8 +57,6 @@ dependencySchema.index(
     unique: true,
   },
 );
-
-export type Dependency = InferSchemaType<typeof dependencySchema>;
 
 const DependencyModel = model<Dependency>('Dependency', dependencySchema);
 

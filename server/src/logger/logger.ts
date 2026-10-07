@@ -6,6 +6,7 @@ class Logger {
   constructor() {
     const options = {
       level: process.env.LOG_LEVEL || 'info',
+      redact: ['req.headers.authorization', 'req.headers.cookie'],
     };
 
     if (process.env.NODE_ENV === 'development') {

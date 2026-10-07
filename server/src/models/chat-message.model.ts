@@ -1,6 +1,19 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
-const chatMessageSchema = new Schema(
+export interface ChatCitation {
+  fileId?: Types.ObjectId;
+  path?: string;
+  line?: number;
+}
+
+export interface ChatMessage {
+  sessionId: Types.ObjectId;
+  role: 'user' | 'assistant';
+  content: string;
+  citations: ChatCitation[];
+}
+
+const chatMessageSchema = new Schema<ChatMessage>(
   {
     sessionId: {
       type: Schema.Types.ObjectId,
@@ -20,29 +33,22 @@ const chatMessageSchema = new Schema(
       required: true,
     },
 
-    citations: [
-      {
-        fileId: {
-          type: Schema.Types.ObjectId,
-          ref: 'File',
+    citations: {
+      type: [
+        {
+          fileId: { type: Schema.Types.ObjectId, ref: 'File' },
+          path: { type: String },
+          line: { type: Number },
         },
-
-        path: {
-          type: String,
-        },
-
-        line: {
-          type: Number,
-        },
-      },
-    ],
+      ],
+      default: [],
+    },
   },
   {
     timestamps: true,
+    collection: 'chatMessages',
   },
 );
-
-export type ChatMessage = InferSchemaType<typeof chatMessageSchema>;
 
 const ChatMessageModel = model<ChatMessage>('ChatMessage', chatMessageSchema);
 

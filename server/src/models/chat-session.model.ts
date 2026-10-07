@@ -24,6 +24,7 @@ const chatSessionSchema = new Schema(
   },
   {
     timestamps: true,
+    collection: 'chatSessions',
   },
 );
 

@@ -7,7 +7,13 @@
     "server:dev": "npm --prefix server run dev",
     "server:build": "npm --prefix server run build",
     "server:check": "npm --prefix server run check",
-    "check": "npm run server:check"
+    "server:test": "npm --prefix server run test",
+    "docker:build": "docker compose -f docker/docker-compose.yml build",
+    "docker:up": "docker compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down",
+    "docker:logs": "docker compose -f docker/docker-compose.yml logs -f",
+    "check": "npm run server:check",
+    "test": "npm run server:test"
   },
   "keywords": [],
   "author": "",
