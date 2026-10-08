@@ -28,6 +28,7 @@
   --graph-repository-surface: #fff7f0;
   --graph-model-surface: #f1faf4;
   --graph-other-surface: #f6f7f9;
+  --graph-dot: #cbd3dd;
 
   --ink: var(--text-primary);
   --muted: var(--text-muted);
@@ -51,8 +52,8 @@
   --text-button: 13px;
 
   --sidebar-width: 230px;
-  --topbar-height: 58px;
-  --graph-inspector-width: 250px;
+  --topbar-height: 52px;
+  --graph-inspector-width: 236px;
   --page-gutter: 24px;
   --panel-radius: 7px;
   --control-radius: 5px;

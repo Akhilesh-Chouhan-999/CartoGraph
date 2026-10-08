@@ -44,12 +44,24 @@ const roles: FileRole[] = [
 ];
 const legendRoles: FileRole[] = [
   'entry',
-  'controller',
   'service',
   'repository',
+  'controller',
   'model',
   'unknown',
 ];
+const legendLabels: Record<FileRole, string> = {
+  entry: 'Entry points',
+  controller: 'Controllers',
+  service: 'Services',
+  repository: 'Repositories',
+  model: 'Models',
+  middleware: 'Others',
+  utility: 'Others',
+  config: 'Others',
+  test: 'Others',
+  unknown: 'Others',
+};
 
 export function GraphPage() {
   const { analysisId = '' } = useParams();
@@ -72,7 +84,10 @@ export function GraphPage() {
         if (active) {
           setGraph(result);
           setSelectedId(
-            result.nodes.find((node) => node.role === 'entry')?.id ?? result.nodes[0]?.id ?? '',
+            result.nodes.find((node) => node.role === 'service')?.id ??
+              result.nodes.find((node) => node.role === 'entry')?.id ??
+              result.nodes[0]?.id ??
+              '',
           );
         }
       })
@@ -124,15 +139,29 @@ export function GraphPage() {
     setEdges(
       converted.edges
         .filter((edge) => visibleIds.has(edge.source) && visibleIds.has(edge.target))
-        .map((edge) =>
-          pathEdges.has(`${edge.source}:${edge.target}`)
+        .map((edge) => {
+          const isPathEdge = pathEdges.has(`${edge.source}:${edge.target}`);
+          const touchesSelection = edge.source === selectedId || edge.target === selectedId;
+          return isPathEdge
             ? {
                 ...edge,
                 animated: true,
+                markerEnd: { type: 'arrowclosed', color: 'var(--primary)' },
                 style: { ...edge.style, stroke: 'var(--primary)', strokeWidth: 3 },
               }
-            : edge,
-        ),
+            : touchesSelection
+              ? {
+                  ...edge,
+                  markerEnd: { type: 'arrowclosed', color: 'var(--primary)' },
+                  style: {
+                    ...edge.style,
+                    stroke: 'var(--primary)',
+                    strokeWidth: 2.4,
+                    filter: 'drop-shadow(0 0 3px rgb(52 120 229 / 40%))',
+                  },
+                }
+              : edge;
+        }),
     );
   }, [converted, query, roleFilter, searchParams, selectedId, setEdges, setNodes]);
 
@@ -223,9 +252,9 @@ export function GraphPage() {
             >
               <Background
                 variant={BackgroundVariant.Dots}
-                gap={18}
+                gap={14}
                 size={1}
-                color="var(--graph-dot, #cfd6e0)"
+                color="var(--graph-dot, #c5ceda)"
               />
               <Controls showInteractive={false} />
               <MiniMap
@@ -237,14 +266,14 @@ export function GraphPage() {
             </ReactFlow>
             <div className="graph-legend">
               <div className="legend-heading">
-                <span>Graph node styles</span>
+                <span>Graph Node Styles</span>
                 <span className="legend-hint">Click a node for details</span>
               </div>
               <div className="legend-grid">
                 {legendRoles.map((role) => (
                   <span key={role}>
                     <i style={{ background: roleStyles[role].color }} />
-                    {roleStyles[role].label}
+                    {legendLabels[role]}
                   </span>
                 ))}
               </div>
@@ -307,32 +336,31 @@ function GraphDetailsPanel({
     <aside className="graph-details">
       <div className="details-title-row">
         <div>
-          <span className="eyebrow">FILE INFO</span>
+          <span className="inspector-heading">File Info Details</span>
           <button className="icon-button" onClick={onClose} aria-label="Close details">
             <X size={17} />
           </button>
         </div>
         <h2>{file.path.split('/').at(-1)}</h2>
-        <code>{file.path}</code>
       </div>
       <div className="graph-detail-actions">
         <Link
           className="button button-outline button-small"
           to={`/analyses/${analysisId}/files/${file.id}`}
         >
-          <FileCode2 size={15} /> View file
+          <FileCode2 size={15} /> View File
         </Link>
         <Link
           className="button button-outline button-small"
           to={`/analyses/${analysisId}/path?source=${file.id}&target=${graph.nodes.find((node) => node.id !== file.id)?.id ?? ''}`}
         >
-          <Waypoints size={15} /> Find path
+          <Waypoints size={15} /> Find Path
         </Link>
         <Link
           className="button button-soft button-small"
           to={`/analyses/${analysisId}/files/${file.id}/blast-radius`}
         >
-          <Crosshair size={15} /> Blast radius
+          <Crosshair size={15} /> Calculate Blast Radius
         </Link>
         <Link
           className="button button-outline button-small"
@@ -351,33 +379,6 @@ function GraphDetailsPanel({
           <span>Fan-out</span>
           <strong>{file.fanOut}</strong>
         </div>
-      </div>
-      <div className="details-section">
-        <h3>File metadata</h3>
-        <dl>
-          <div>
-            <dt>Role</dt>
-            <dd>
-              <span
-                className="role-pill"
-                style={{
-                  color: roleStyles[file.role].color,
-                  background: roleStyles[file.role].background,
-                }}
-              >
-                {roleStyles[file.role].label}
-              </span>
-            </dd>
-          </div>
-          <div>
-            <dt>Language</dt>
-            <dd>{file.language}</dd>
-          </div>
-          <div>
-            <dt>Lines</dt>
-            <dd>{file.lines.toLocaleString()}</dd>
-          </div>
-        </dl>
       </div>
       <DependencyMiniList
         title="Dependencies"

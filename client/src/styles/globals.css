@@ -1311,6 +1311,25 @@ button {
   font-size: 11px;
   font-weight: 600;
 }
+
+.repository-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.repository-select .repository-icon {
+  position: absolute;
+  z-index: 1;
+  left: 11px;
+  color: #273244;
+  pointer-events: none;
+}
+
+.repository-select select {
+  min-width: 295px;
+  padding-left: 37px;
+}
 .branch-chip {
   display: inline-flex;
   align-items: center;
@@ -1349,6 +1368,12 @@ button {
   height: 14px;
   border-radius: 50%;
   background: var(--surface);
+}
+
+.switch-control-on {
+  justify-content: flex-end;
+  border-color: var(--primary);
+  background: var(--primary);
 }
 .notification-button {
   color: var(--text-muted);
@@ -4204,7 +4229,7 @@ body {
 }
 
 .sidebar-search {
-  margin: 3px 0 17px;
+  margin: 0 0 13px;
 }
 
 .sidebar-search input {
@@ -4482,8 +4507,8 @@ body {
 .graph-toolbar {
   position: absolute;
   z-index: 8;
-  top: 12px;
-  right: 274px;
+  top: 8px;
+  right: calc(var(--graph-inspector-width) + 24px);
   left: auto;
   align-items: center;
   pointer-events: none;
@@ -4528,16 +4553,24 @@ body {
   inset: 0;
   border: 0;
   border-radius: 0;
-  background: #f7f8fb;
+  background-color: #f7f8fb;
+  background-image: radial-gradient(var(--graph-dot) 0.8px, transparent 0.9px);
+  background-position: 7px 7px;
+  background-size: 14px 14px;
 }
 
 .graph-canvas .react-flow {
   width: calc(100% - var(--graph-inspector-width));
-  background-color: #f7f8fb;
+  background: transparent;
 }
 
 .graph-canvas .react-flow__node-default {
   text-align: left;
+}
+
+.graph-canvas .react-flow__pane,
+.graph-canvas .react-flow__viewport {
+  background: transparent;
 }
 
 .graph-canvas .react-flow__handle {
@@ -4559,9 +4592,9 @@ body {
 }
 
 .graph-legend {
-  top: 13px;
+  top: 8px;
   left: 13px;
-  width: 190px;
+  width: 174px;
   padding: 13px;
   border-color: #d3d9e2;
   border-radius: 6px;
@@ -4611,14 +4644,14 @@ body {
 .graph-details {
   position: absolute;
   z-index: 9;
-  top: 12px;
+  top: 8px;
   right: 12px;
   bottom: 12px;
-  width: 250px;
-  flex-basis: 250px;
+  width: var(--graph-inspector-width);
+  flex-basis: var(--graph-inspector-width);
   gap: 13px;
   overflow-x: hidden;
-  padding: 15px;
+  padding: 8px 15px 15px;
   border-color: #d1d7e0;
   border-radius: 6px;
   box-shadow: 0 2px 7px rgb(20 35 60 / 12%);
@@ -4627,7 +4660,7 @@ body {
 .details-title-row h2 {
   margin: 5px 0 2px;
   color: var(--text-primary);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -4712,14 +4745,37 @@ body {
   font-size: 11px;
 }
 
+.inspector-heading {
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .graph-select-prompt {
   position: absolute;
   z-index: 8;
-  top: 12px;
+  top: 8px;
   right: 12px;
-  width: 250px;
+  width: var(--graph-inspector-width);
   border-color: #d1d7e0;
   border-radius: 6px;
+}
+
+@media (min-width: 1101px) {
+  .repository-select select {
+    min-width: 344px;
+    padding-left: 37px;
+  }
+
+  .switch-control.switch-control-on {
+    justify-content: flex-end;
+    border-color: var(--primary);
+    background: var(--primary);
+  }
+
+  .graph-count {
+    display: none;
+  }
 }
 
 .graph-select-prompt strong {

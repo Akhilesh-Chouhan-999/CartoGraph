@@ -21,9 +21,9 @@ const navigation = [
   { label: 'Overview', to: '/dashboard', icon: LayoutDashboard },
   { label: 'Projects', to: '/projects', icon: Boxes },
   { label: 'Analyses', to: '/analyses', icon: Activity },
-  { label: 'Dependency graph', to: '/analyses', icon: Waypoints },
+  { label: 'Dependency Graph', to: '/analyses', icon: Waypoints },
   { label: 'Files', to: '/analyses', icon: Files },
-  { label: 'AI chat', to: '/analyses', icon: BotMessageSquare },
+  { label: 'AI Chat', to: '/analyses', icon: BotMessageSquare },
 ];
 
 export function DashboardLayout() {
@@ -65,8 +65,8 @@ export function DashboardLayout() {
           <input
             value={navigationFilter}
             onChange={(event) => setNavigationFilter(event.target.value)}
-            placeholder="Search workspace"
-            aria-label="Search workspace"
+            placeholder="Search"
+            aria-label="Search navigation"
           />
         </label>
         <div className="nav-section-label">WORKSPACE</div>
@@ -86,7 +86,7 @@ export function DashboardLayout() {
                         !location.pathname.includes('/graph') &&
                         !location.pathname.includes('/files') &&
                         !location.pathname.includes('/chat')
-                      : label === 'Dependency graph'
+                      : label === 'Dependency Graph'
                         ? location.pathname.includes('/graph')
                         : label === 'Files'
                           ? location.pathname.includes('/files')

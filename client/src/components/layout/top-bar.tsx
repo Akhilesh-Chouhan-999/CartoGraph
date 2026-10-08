@@ -1,6 +1,6 @@
-import { Bell, GitBranch, Menu, ScanLine } from 'lucide-react';
+import { ChevronDown, Github, GitBranch, Menu, ScanLine } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { PROJECTS_CHANGED_EVENT, projectService } from '../../services/projects/project.service.js';
 import { analysisService } from '../../services/analyses/analysis.service.js';
@@ -61,6 +61,7 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="top-context">
           <label className="select-wrap repository-select">
             <span className="sr-only">Repository</span>
+            <Github className="repository-icon" size={18} aria-hidden="true" />
             <select
               value={selected}
               onChange={(event) => {
@@ -81,25 +82,23 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
           <span className="branch-chip">
             <GitBranch size={15} />
             {current?.defaultBranch ?? '—'}
+            <ChevronDown size={14} />
           </span>
         </div>
         <div className="top-actions">
           <button className="button button-primary button-small" onClick={() => setScanOpen(true)}>
-            <ScanLine size={16} /> Scan repo
+            <ScanLine size={16} /> Scan Repo
           </button>
           <span className="top-divider" />
-          <span className="org-label">Organization</span>
+          <span className="org-label">Org switching</span>
           <button
-            className="switch-control"
+            className="switch-control switch-control-on"
             disabled
             aria-label="Organization switching is not available"
             title="Organization switching is not available yet"
           >
             <span />
           </button>
-          <Link className="icon-button notification-button" to="/settings" aria-label="Settings">
-            <Bell size={18} />
-          </Link>
         </div>
       </header>
       {scanOpen && (
