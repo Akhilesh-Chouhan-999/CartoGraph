@@ -14,6 +14,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader } from '../../components/ui/page-header.js';
 import { useAuth } from '../../context/use-auth.js';
 
+/**
+ * Renders the settings page interface.
+ */
 export function SettingsPage() {
   const { user } = useAuth();
   const { signOut } = useAuth();
@@ -27,6 +30,12 @@ export function SettingsPage() {
       delete document.documentElement.dataset.compact;
     };
   }, [compact]);
+  /**
+   * Applies the supplied changes to the selected project.
+   * @param key - The key value used by this operation.
+   * @param value - The value value used by this operation.
+   * @param updateState - The update state value used by this operation.
+   */
   function update(key: string, value: boolean, updateState: (next: boolean) => void) {
     window.localStorage.setItem(key, String(value));
     updateState(value);
@@ -168,6 +177,10 @@ export function SettingsPage() {
   );
 }
 
+/**
+ * Renders the preference row interface.
+ * @param props - The component properties.
+ */
 function PreferenceRow({
   icon,
   title,

@@ -34,6 +34,9 @@ interface UiMessage {
   citations: ChatCitation[];
 }
 
+/**
+ * Renders the chat page interface.
+ */
 export function ChatPage() {
   const { analysisId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -92,6 +95,10 @@ export function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, sending]);
 
+  /**
+   * Sends the composed question to the repository chat service.
+   * @param event - The event value used by this operation.
+   */
   async function send(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
     const content = draft.trim();
@@ -116,6 +123,9 @@ export function ChatPage() {
     }
   }
 
+  /**
+   * Creates a new chat session for the active analysis.
+   */
   async function startConversation() {
     if (!project || creatingSession) return;
     setCreatingSession(true);
@@ -133,6 +143,9 @@ export function ChatPage() {
     }
   }
 
+  /**
+   * Deletes the selected chat session and its messages.
+   */
   async function deleteConversation() {
     if (!sessionId || !window.confirm('Delete this conversation and its saved messages?')) return;
     setDeletingSession(true);
@@ -360,6 +373,10 @@ export function ChatPage() {
   );
 }
 
+/**
+ * Converts the supplied value to ui message.
+ * @param message - The message content.
+ */
 function toUiMessage(message: ChatMessage): UiMessage {
   return {
     key: message._id,
@@ -369,6 +386,9 @@ function toUiMessage(message: ChatMessage): UiMessage {
   };
 }
 
+/**
+ * Renders the git branch icon interface.
+ */
 function GitBranchIcon() {
   return <GitBranch size={16} />;
 }

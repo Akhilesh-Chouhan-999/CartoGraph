@@ -32,11 +32,19 @@ apiClient.interceptors.response.use(
   },
 );
 
+/**
+ * Unwraps the response payload from the standard API envelope.
+ * @param request - The request to send or process.
+ */
 export async function responseData<T>(request: Promise<AxiosResponse<ApiEnvelope<T>>>): Promise<T> {
   const response = await request;
   return response.data.data;
 }
 
+/**
+ * Extracts a readable message from an API error response.
+ * @param error - The error to normalize or report.
+ */
 export function errorMessage(error: unknown): string {
   if (error instanceof AxiosError) return error.message;
   if (error instanceof Error) return error.message;

@@ -9,6 +9,9 @@ import { fileService } from '../../services/files/file.service.js';
 import { graphService } from '../../services/graph/graph.service.js';
 import type { BlastRadius, FileRecord } from '../../types/domain.js';
 
+/**
+ * Renders the blast radius page interface.
+ */
 export function BlastRadiusPage() {
   const { analysisId = '', fileId = '' } = useParams();
   const [file, setFile] = useState<FileRecord | null>(null);
@@ -105,6 +108,10 @@ export function BlastRadiusPage() {
   );
 }
 
+/**
+ * Renders the dependent panel interface.
+ * @param props - The component properties.
+ */
 function DependentPanel({
   title,
   values,

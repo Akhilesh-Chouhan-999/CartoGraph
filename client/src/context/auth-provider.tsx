@@ -6,12 +6,19 @@ import { clearToken, getToken, storeToken } from '../services/auth/token-storage
 import type { SafeUser } from '../types/domain.js';
 import { AuthContext } from './auth-context.js';
 
+/**
+ * Renders the auth provider interface.
+ * @param props - The component properties.
+ */
 export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<SafeUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
+    /**
+     * Restores the saved authentication state when the provider mounts.
+     */
     const restore = async () => {
       if (!getToken()) {
         if (active) setReady(true);
@@ -28,6 +35,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     };
     void restore();
+    /**
+     * Clears invalid authentication state after an unauthorized API response.
+     */
     const onUnauthorized = () => {
       clearToken();
       setUser(null);

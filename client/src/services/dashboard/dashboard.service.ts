@@ -14,6 +14,9 @@ export interface DashboardData {
   roleDistribution: Partial<Record<FileRole, number>>;
 }
 
+/**
+ * Loads project and analysis summaries for the dashboard.
+ */
 export async function loadDashboard(): Promise<DashboardData> {
   const projects = await projectService.list();
   const entries = await Promise.all(

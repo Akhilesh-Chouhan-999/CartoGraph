@@ -5,6 +5,10 @@ import { GitBranch, LoaderCircle, X } from 'lucide-react';
 import { analysisService } from '../../services/analyses/analysis.service.js';
 import type { Project } from '../../types/domain.js';
 
+/**
+ * Renders the scan dialog interface.
+ * @param props - The component properties.
+ */
 export function ScanDialog({
   projects,
   initialProjectId,
@@ -24,6 +28,10 @@ export function ScanDialog({
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
+  /**
+   * Validates and submits the current form values.
+   * @param event - The event value used by this operation.
+   */
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');

@@ -6,6 +6,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'normal' | 'small';
 }
 
+/**
+ * Renders the button interface.
+ * @param props - The component properties.
+ */
 export function Button({
   children,
   variant = 'primary',

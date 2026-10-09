@@ -4,6 +4,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/use-auth.js';
 
+/**
+ * Renders the auth page interface.
+ * @param props - The component properties.
+ */
 export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const registering = mode === 'register';
   const { signIn, signUp } = useAuth();
@@ -17,6 +21,10 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const [busy, setBusy] = useState(false);
   const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
 
+  /**
+   * Validates and submits the current form values.
+   * @param event - The event value used by this operation.
+   */
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');

@@ -3,6 +3,9 @@ import { Link, Outlet } from 'react-router-dom';
 
 import { BrandMark } from '../components/common/brand-mark.js';
 
+/**
+ * Renders the auth layout interface.
+ */
 export function AuthLayout() {
   return (
     <main className="auth-shell">

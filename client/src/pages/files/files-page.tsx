@@ -9,6 +9,9 @@ import { fileService } from '../../services/files/file.service.js';
 import type { FileRecord } from '../../types/domain.js';
 import { roleStyles } from '../../utils/graph-layout.js';
 
+/**
+ * Renders the files page interface.
+ */
 export function FilesPage() {
   const { analysisId = '' } = useParams();
   const [files, setFiles] = useState<FileRecord[]>([]);

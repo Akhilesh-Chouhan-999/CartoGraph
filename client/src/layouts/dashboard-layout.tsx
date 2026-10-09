@@ -26,6 +26,9 @@ const navigation = [
   { label: 'AI Chat', to: '/analyses', icon: BotMessageSquare },
 ];
 
+/**
+ * Renders the dashboard layout interface.
+ */
 export function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -35,6 +38,9 @@ export function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  /**
+   * Ends the current user session and clears saved credentials.
+   */
   async function logout() {
     await signOut();
     navigate('/login');

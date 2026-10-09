@@ -7,6 +7,10 @@ import { analysisService } from '../../services/analyses/analysis.service.js';
 import type { Project } from '../../types/domain.js';
 import { ScanDialog } from './scan-dialog.js';
 
+/**
+ * Renders the top bar interface.
+ * @param props - The component properties.
+ */
 export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate();
   const { projectId, analysisId } = useParams();
@@ -16,6 +20,9 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
 
   useEffect(() => {
     let alive = true;
+    /**
+     * Loads the user’s projects for the repository selector.
+     */
     const loadProjects = () => {
       void projectService
         .list()

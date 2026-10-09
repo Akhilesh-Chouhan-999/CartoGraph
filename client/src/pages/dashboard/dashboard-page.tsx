@@ -21,12 +21,19 @@ import { useAuth } from '../../context/use-auth.js';
 import { roleStyles } from '../../utils/graph-layout.js';
 import type { FileRole } from '../../types/domain.js';
 
+/**
+ * Formats a date value for display in the dashboard.
+ * @param value - The value value used by this operation.
+ */
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(
     new Date(value),
   );
 }
 
+/**
+ * Renders the dashboard page interface.
+ */
 export function DashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -316,6 +323,9 @@ export function DashboardPage() {
   );
 }
 
+/**
+ * Renders the files icon interface.
+ */
 function FilesIcon() {
   return <Boxes size={19} />;
 }

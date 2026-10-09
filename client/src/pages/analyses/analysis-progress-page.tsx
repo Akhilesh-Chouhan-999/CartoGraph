@@ -10,6 +10,9 @@ import { analysisService } from '../../services/analyses/analysis.service.js';
 import type { Analysis, AnalysisStatusInfo, Project } from '../../types/domain.js';
 import { projectService } from '../../services/projects/project.service.js';
 
+/**
+ * Renders the analysis progress page interface.
+ */
 export function AnalysisProgressPage() {
   const { analysisId = '' } = useParams();
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -21,6 +24,9 @@ export function AnalysisProgressPage() {
   useEffect(() => {
     let active = true;
     let timer: number | undefined;
+    /**
+     * Refreshes the current analysis data from the API.
+     */
     async function refresh() {
       try {
         const current = await analysisService.get(analysisId);

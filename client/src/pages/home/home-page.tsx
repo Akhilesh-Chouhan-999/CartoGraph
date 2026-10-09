@@ -35,6 +35,9 @@ const features = [
   },
 ];
 
+/**
+ * Renders the home page interface.
+ */
 export function HomePage() {
   return (
     <main>
@@ -72,6 +75,19 @@ export function HomePage() {
             <span>
               <GitBranch size={15} /> No source execution
             </span>
+          </div>
+          <div className="hero-repo-form">
+            <strong>Input GitHub URL</strong>
+            <div>
+              <input
+                aria-label="GitHub repository URL"
+                defaultValue="github.com/Akhilesh-Chouhan-999/CartoGraph"
+                placeholder="github.com/owner/repository"
+              />
+              <Link className="button button-primary button-small" to="/register">
+                Analyze Repo
+              </Link>
+            </div>
           </div>
         </div>
         <div className="hero-visual">

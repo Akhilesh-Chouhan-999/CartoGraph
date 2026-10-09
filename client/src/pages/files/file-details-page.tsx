@@ -17,6 +17,9 @@ import { fileService } from '../../services/files/file.service.js';
 import type { DependencyRecord, FileRecord } from '../../types/domain.js';
 import { roleStyles } from '../../utils/graph-layout.js';
 
+/**
+ * Renders the file details page interface.
+ */
 export function FileDetailsPage() {
   const { analysisId = '', fileId = '' } = useParams();
   const [file, setFile] = useState<FileRecord | null>(null);
@@ -182,6 +185,10 @@ export function FileDetailsPage() {
   );
 }
 
+/**
+ * Renders the dependency list interface.
+ * @param props - The component properties.
+ */
 function DependencyList({
   title,
   values,

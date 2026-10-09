@@ -27,6 +27,9 @@ import { ScanDialog } from '../../components/layout/scan-dialog.js';
 import { fileService } from '../../services/files/file.service.js';
 import type { ProjectInput } from '../../services/projects/project.service.js';
 
+/**
+ * Renders the project details page interface.
+ */
 export function ProjectDetailsPage() {
   const { projectId = '' } = useParams();
   const navigate = useNavigate();
@@ -85,6 +88,9 @@ export function ProjectDetailsPage() {
   const projectRecord = project;
   const latest = analyses[0];
 
+  /**
+   * Removes the requested this module data.
+   */
   async function deleteProject() {
     if (
       !window.confirm(
@@ -339,6 +345,10 @@ export function ProjectDetailsPage() {
   );
 }
 
+/**
+ * Renders the edit project dialog interface.
+ * @param props - The component properties.
+ */
 function EditProjectDialog({
   project,
   onClose,
@@ -353,6 +363,10 @@ function EditProjectDialog({
   const [defaultBranch, setDefaultBranch] = useState(project.defaultBranch);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  /**
+   * Validates and submits the current form values.
+   * @param event - The event value used by this operation.
+   */
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);

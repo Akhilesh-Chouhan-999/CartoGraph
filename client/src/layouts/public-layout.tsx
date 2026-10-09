@@ -4,6 +4,9 @@ import { Link, Outlet } from 'react-router-dom';
 
 import { BrandMark } from '../components/common/brand-mark.js';
 
+/**
+ * Renders the public layout interface.
+ */
 export function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (

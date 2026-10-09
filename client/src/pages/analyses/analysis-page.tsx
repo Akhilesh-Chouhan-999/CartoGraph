@@ -19,6 +19,9 @@ import { analysisService } from '../../services/analyses/analysis.service.js';
 import { projectService } from '../../services/projects/project.service.js';
 import type { Analysis, Project, ProjectStats } from '../../types/domain.js';
 
+/**
+ * Renders the analysis page interface.
+ */
 export function AnalysisPage() {
   const { analysisId = '' } = useParams();
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -176,6 +179,10 @@ export function AnalysisPage() {
   );
 }
 
+/**
+ * Formats an analysis duration for display.
+ * @param milliseconds - The milliseconds value used by this operation.
+ */
 function formatDuration(milliseconds: number): string {
   if (!Number.isFinite(milliseconds) || milliseconds < 0) return '—';
   if (milliseconds < 1000) return `${milliseconds} ms`;

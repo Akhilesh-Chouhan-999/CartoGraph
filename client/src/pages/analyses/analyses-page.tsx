@@ -9,6 +9,9 @@ import { errorMessage } from '../../services/api/api-client.js';
 import { loadDashboard, type DashboardData } from '../../services/dashboard/dashboard.service.js';
 import type { Analysis } from '../../types/domain.js';
 
+/**
+ * Renders the analyses page interface.
+ */
 export function AnalysesPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -167,6 +170,10 @@ export function AnalysesPage() {
   );
 }
 
+/**
+ * Renders the explore action interface.
+ * @param props - The component properties.
+ */
 function ExploreAction({
   analysis,
   ready,

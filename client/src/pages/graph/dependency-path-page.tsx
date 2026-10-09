@@ -8,6 +8,9 @@ import { errorMessage } from '../../services/api/api-client.js';
 import { graphService } from '../../services/graph/graph.service.js';
 import type { DependencyPath, GraphData } from '../../types/domain.js';
 
+/**
+ * Renders the dependency path page interface.
+ */
 export function DependencyPathPage() {
   const { analysisId = '' } = useParams();
   const [params] = useSearchParams();
@@ -36,6 +39,10 @@ export function DependencyPathPage() {
     };
   }, [analysisId]);
 
+  /**
+   * Submits the selected source and target files to find their verified dependency path.
+   * @param event - The event value used by this operation.
+   */
   async function findPath(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSearching(true);
@@ -169,6 +176,10 @@ export function DependencyPathPage() {
   );
 }
 
+/**
+ * Renders the file path label interface.
+ * @param props - The component properties.
+ */
 function FilePathLabel({ path }: { path: string }) {
   return (
     <span className="path-file-label">

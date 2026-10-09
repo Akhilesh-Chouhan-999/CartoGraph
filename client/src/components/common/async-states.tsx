@@ -1,6 +1,10 @@
 import { AlertCircle, Boxes, LoaderCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+/**
+ * Renders the loading state interface.
+ * @param props - The component properties.
+ */
 export function LoadingState({ label = 'Loading your workspace' }: { label?: string }) {
   return (
     <div className="state-card" role="status">
@@ -10,6 +14,10 @@ export function LoadingState({ label = 'Loading your workspace' }: { label?: str
   );
 }
 
+/**
+ * Renders the loading screen interface.
+ * @param props - The component properties.
+ */
 export function LoadingScreen({ label }: { label: string }) {
   return (
     <main className="loading-screen">
@@ -18,6 +26,10 @@ export function LoadingScreen({ label }: { label: string }) {
   );
 }
 
+/**
+ * Renders the error state interface.
+ * @param props - The component properties.
+ */
 export function ErrorState({ message, retry }: { message: string; retry?: () => void }) {
   return (
     <div className="state-card state-error" role="alert">
@@ -32,6 +44,10 @@ export function ErrorState({ message, retry }: { message: string; retry?: () => 
   );
 }
 
+/**
+ * Renders the empty state interface.
+ * @param props - The component properties.
+ */
 export function EmptyState({
   title,
   description,

@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
 
+/**
+ * Renders the page header interface.
+ * @param props - The component properties.
+ */
 export function PageHeader({
   eyebrow,
   title,

@@ -9,6 +9,10 @@ const statusConfig: Record<AnalysisStatus, { label: string; icon: typeof Clock3 
   failed: { label: 'Failed', icon: CircleAlert },
 };
 
+/**
+ * Renders the status badge interface.
+ * @param props - The component properties.
+ */
 export function StatusBadge({ status }: { status: AnalysisStatus }) {
   const { label, icon: Icon } = statusConfig[status];
   return (

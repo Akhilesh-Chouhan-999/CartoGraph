@@ -14,6 +14,9 @@ import {
 } from '../../services/projects/project.service.js';
 import type { Project } from '../../types/domain.js';
 
+/**
+ * Renders the projects page interface.
+ */
 export function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +44,10 @@ export function ProjectsPage() {
     };
   }, [refresh]);
 
+  /**
+   * Creates this module data from the supplied input.
+   * @param input - The input value to process.
+   */
   async function createProject(input: ProjectInput) {
     await projectService.create(input);
     window.dispatchEvent(new Event(PROJECTS_CHANGED_EVENT));
@@ -112,6 +119,10 @@ export function ProjectsPage() {
   );
 }
 
+/**
+ * Renders the project card interface.
+ * @param props - The component properties.
+ */
 function ProjectCard({ project }: { project: Project }) {
   const [latest, setLatest] = useState<
     Awaited<ReturnType<typeof projectService.analyses>>[number] | null
@@ -174,6 +185,10 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
+/**
+ * Renders the create project dialog interface.
+ * @param props - The component properties.
+ */
 function CreateProjectDialog({
   onClose,
   onCreate,
@@ -186,6 +201,10 @@ function CreateProjectDialog({
   const [defaultBranch, setDefaultBranch] = useState('main');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  /**
+   * Validates and submits the current form values.
+   * @param event - The event value used by this operation.
+   */
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);

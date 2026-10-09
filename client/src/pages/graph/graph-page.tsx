@@ -63,6 +63,9 @@ const legendLabels: Record<FileRole, string> = {
   unknown: 'Others',
 };
 
+/**
+ * Renders the graph page interface.
+ */
 export function GraphPage() {
   const { analysisId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -174,10 +177,18 @@ export function GraphPage() {
   if (loading) return <LoadingState label="Building dependency graph" />;
   if (error || !graph) return <ErrorState message={error || 'Graph data is unavailable.'} />;
 
+  /**
+   * Selects the clicked graph node and opens its file details.
+   * @param _event - The  event value used by this operation.
+   * @param node - The node value used by this operation.
+   */
   function onNodeClick(_event: MouseEvent, node: Node<GraphNodeData>) {
     setSelectedId(node.id);
   }
 
+  /**
+   * Clears graph selections and restores the default graph view.
+   */
   function resetGraph() {
     setQuery('');
     setRoleFilter('all');
@@ -312,6 +323,10 @@ export function GraphPage() {
   );
 }
 
+/**
+ * Renders the graph details panel interface.
+ * @param props - The component properties.
+ */
 function GraphDetailsPanel({
   graph,
   file,
@@ -392,6 +407,10 @@ function GraphDetailsPanel({
   );
 }
 
+/**
+ * Renders the dependency mini list interface.
+ * @param props - The component properties.
+ */
 function DependencyMiniList({
   title,
   items,

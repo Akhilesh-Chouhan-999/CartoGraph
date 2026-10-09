@@ -54,6 +54,10 @@ export const roleStyles: Record<FileRole, { color: string; background: string; l
   },
 };
 
+/**
+ * Converts verified graph nodes and edges into positioned React Flow elements.
+ * @param data - The graph nodes and dependency edges to lay out.
+ */
 export function toFlowGraph(data: GraphData): { nodes: Node<GraphNodeData>[]; edges: Edge[] } {
   const byId = new Map(data.nodes.map((node) => [node.id, node]));
   const outgoing = new Map<string, string[]>();
@@ -73,6 +77,9 @@ export function toFlowGraph(data: GraphData): { nodes: Node<GraphNodeData>[]; ed
     .sort((a, b) => a.path.localeCompare(b.path))
     .map((node) => node.id);
 
+  /**
+   * Assigns graph layers to nodes by traversing outgoing dependency edges.
+   */
   const assignDepths = (starts: string[]) => {
     const pending = [...starts];
     for (const id of starts) depthById.set(id, depthById.get(id) ?? 0);
@@ -108,6 +115,9 @@ export function toFlowGraph(data: GraphData): { nodes: Node<GraphNodeData>[]; ed
       const childrenB = outgoing.get(b)?.length ?? 0;
       const roleA = byId.get(a)?.role;
       const roleB = byId.get(b)?.role;
+      /**
+       * Returns the priority used to choose a representative node for each graph layer.
+       */
       const rolePriority = (role: FileRole | undefined) =>
         role === 'controller' ? 3 : role === 'service' ? 2 : role === 'repository' ? 1 : 0;
       return (
@@ -126,6 +136,9 @@ export function toFlowGraph(data: GraphData): { nodes: Node<GraphNodeData>[]; ed
   const rowsById = new Map<string, number>();
   const orderedLayers = [...layers.entries()].sort(([a], [b]) => a - b);
   for (const [depth, layer] of orderedLayers) {
+    /**
+     * Finds the graph rows occupied by a node’s incoming source files.
+     */
     const sourceRows = (node: GraphNode) =>
       (incoming.get(node.id) ?? [])
         .filter((sourceId) => depthById.get(sourceId) === depth - 1)

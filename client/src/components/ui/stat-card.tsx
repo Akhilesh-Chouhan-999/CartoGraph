@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
 
+/**
+ * Renders the stat card interface.
+ * @param props - The component properties.
+ */
 export function StatCard({
   label,
   value,
