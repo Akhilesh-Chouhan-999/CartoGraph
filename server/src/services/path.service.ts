@@ -3,16 +3,30 @@ import GraphAlgorithms from '../analysis/graph.algorithms.js';
 import AnalysisService from './analysis.service.js';
 import { AppError } from '../errors/index.js';
 
+/**
+ * Coordinates path application logic.
+ */
 class PathService {
   private readonly files = new FileRepository();
   private readonly dependencies = new DependencyRepository();
   private readonly algorithms = new GraphAlgorithms();
   private readonly analyses: AnalysisService;
 
+  /**
+   * Initializes the path service instance.
+   * @param analyses - The analyses value used by this operation.
+   */
   constructor(analyses: AnalysisService) {
     this.analyses = analyses;
   }
 
+  /**
+   * Finds the shortest directed path between two files in an analysis.
+   * @param userId - The user identifier.
+   * @param analysisId - The analysis identifier.
+   * @param sourceFileId - The source file identifier.
+   * @param targetFileId - The target file identifier.
+   */
   public async findDependencyPath(
     userId: string,
     analysisId: string,

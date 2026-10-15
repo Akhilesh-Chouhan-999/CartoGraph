@@ -1,5 +1,8 @@
 import { rateLimit } from 'express-rate-limit';
 
+/**
+ * Provides middleware for rate limit request handling.
+ */
 class RateLimitMiddleware {
   public readonly general = rateLimit({
     windowMs: 15 * 60 * 1000,

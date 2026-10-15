@@ -7,6 +7,9 @@ import PathService from '../services/path.service.js';
 import BlastRadiusService from '../services/blast-radius.service.js';
 import DependencyService from '../services/dependency.service.js';
 
+/**
+ * Creates verified graph tools for the AI agent.
+ */
 export class GraphTools {
   private readonly files: FileService;
   private readonly dependencies: DependencyService;
@@ -14,6 +17,10 @@ export class GraphTools {
   private readonly paths: PathService;
   private readonly blastRadius: BlastRadiusService;
 
+  /**
+   * Initializes the graph tools instance.
+   * @param analysisService - The analysis service value used by this operation.
+   */
   constructor(analysisService: import('../services/analysis.service.js').default) {
     this.files = new FileService(analysisService);
     this.dependencies = new DependencyService(analysisService);
@@ -22,6 +29,12 @@ export class GraphTools {
     this.blastRadius = new BlastRadiusService(analysisService);
   }
 
+  /**
+   * Creates a graph record from the validated input.
+   * @param analysisId - The analysis identifier.
+   * @param userId - The user identifier.
+   * @param cite - The cite value used by this operation.
+   */
   public create(analysisId: string, userId: string, cite: (path: string) => void) {
     return [
       tool(

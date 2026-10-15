@@ -9,9 +9,17 @@ import FileRoutes from './file.routes.js';
 import ProjectRoutes from './project.routes.js';
 import type AnalysisQueue from '../queues/analysis.queue.js';
 
+/**
+ * Registers the api API routes.
+ */
 class ApiRoutes {
   public readonly router = Router();
 
+  /**
+   * Initializes the api routes instance.
+   * @param queue - The queue value used by this operation.
+   * @param redis - The redis value used by this operation.
+   */
   constructor(queue: AnalysisQueue, redis: Redis) {
     this.router.use('/auth', new AuthRoutes(redis).router);
     this.router.use('/projects', new ProjectRoutes(queue, redis).router);

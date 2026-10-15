@@ -9,14 +9,25 @@ import { GraphTools } from './graph.tools.js';
 import { CARTOGRAPH_CONTEXT_PROMPT } from './prompts.js';
 import type AnalysisService from '../services/analysis.service.js';
 
+/**
+ * Coordinates grounded AI responses for carto graph.
+ */
 class CartoGraphAgent {
   private readonly config = new AiConfig();
   private readonly graphTools: GraphTools;
 
+  /**
+   * Initializes the carto graph agent instance.
+   * @param analysisService - The analysis service value used by this operation.
+   */
   constructor(analysisService: AnalysisService) {
     this.graphTools = new GraphTools(analysisService);
   }
 
+  /**
+   * Produces a response to the supplied carto graph request.
+   * @param input - The input value to process.
+   */
   public async answer(input: {
     analysisId: string;
     userId: string;
@@ -33,6 +44,9 @@ class CartoGraphAgent {
       model: this.config.model,
       temperature: 0,
     }).bindTools(tools);
+    /**
+     * Invokes the LangGraph agent with the supplied conversation state.
+     */
     const callAgent = async (state: typeof MessagesAnnotation.State) => ({
       messages: [await model.invoke(state.messages)],
     });

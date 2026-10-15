@@ -36,6 +36,9 @@ const envSchema = z.object({
   LANGSMITH_PROJECT: z.string().default('CartoGraph'),
 });
 
+/**
+ * Loads and exposes env configuration.
+ */
 class EnvConfig {
   public readonly nodeEnv: 'development' | 'test' | 'production';
   public readonly port: number;
@@ -52,6 +55,9 @@ class EnvConfig {
   public readonly langSmithTracing: boolean;
   public readonly langSmithProject: string;
 
+  /**
+   * Initializes the env config instance.
+   */
   constructor() {
     const result = envSchema.safeParse(process.env);
 

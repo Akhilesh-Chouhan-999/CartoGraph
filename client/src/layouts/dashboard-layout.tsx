@@ -37,6 +37,7 @@ export function DashboardLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const analysisId = location.pathname.match(/^\/analyses\/([^/]+)/)?.[1];
 
   /**
    * Ends the current user session and clears saved credentials.
@@ -100,8 +101,17 @@ export function DashboardLayout() {
               return (
                 <NavLink
                   key={label}
-                  to={to}
+                  to={
+                    analysisId && label === 'Dependency Graph'
+                      ? `/analyses/${analysisId}/graph`
+                      : analysisId && label === 'Files'
+                        ? `/analyses/${analysisId}/files`
+                        : analysisId && label === 'AI Chat'
+                          ? `/analyses/${analysisId}/chat`
+                          : to
+                  }
                   className={`side-link${active ? ' side-link-active' : ''}`}
+                  aria-current={active ? 'page' : undefined}
                   onClick={() => setMobileOpen(false)}
                 >
                   <Icon size={18} />

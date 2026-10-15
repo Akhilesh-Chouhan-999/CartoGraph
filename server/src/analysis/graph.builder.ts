@@ -18,7 +18,15 @@ export interface BuiltGraphEdge {
   line: number;
 }
 
+/**
+ * Builds graph b data from analyzed inputs.
+ */
 class GraphBuilder {
+  /**
+   * Builds a deterministic graph from the resolved dependency relationships.
+   * @param files - The files value used by this operation.
+   * @param dependencies - The dependencies value used by this operation.
+   */
   public build(
     files: AnalyzedSourceFile[],
     dependencies: ResolvedDependency[],

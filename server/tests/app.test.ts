@@ -9,10 +9,18 @@ describe('API error handling', () => {
     const response = {
       statusCode: 0,
       body: undefined as unknown,
+      /**
+       * Records the HTTP status code returned by the error middleware.
+       * @param code - The HTTP status code to record.
+       */
       status(code: number) {
         this.statusCode = code;
         return this;
       },
+      /**
+       * Stores the JSON response body returned by the error middleware.
+       * @param body - The response body to store.
+       */
       json(body: unknown) {
         this.body = body;
         return this;

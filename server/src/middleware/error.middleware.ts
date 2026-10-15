@@ -5,19 +5,31 @@ import { ZodError } from 'zod';
 import AppError from '../errors/app.error.js';
 import Logger from '../logger/logger.js';
 
+/**
+ * Provides middleware for error request handling.
+ */
 class ErrorMiddleware {
   private readonly logger: Logger;
 
+  /**
+   * Initializes the error middleware instance.
+   */
   constructor() {
     this.logger = new Logger();
   }
 
+  /**
+   * Creates middleware that returns the standard not-found response.
+   */
   public notFound(): RequestHandler {
     return (req, _res, next) => {
       next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404));
     };
   }
 
+  /**
+   * Converts application errors into the standard HTTP error response.
+   */
   public handler(): ErrorRequestHandler {
     return (error, _req, res, _next) => {
       const appError = this.toAppError(error);
@@ -38,6 +50,10 @@ class ErrorMiddleware {
     };
   }
 
+  /**
+   * Normalizes an unknown error into an application error.
+   * @param error - The error to normalize or report.
+   */
   private toAppError(error: unknown): AppError {
     if (error instanceof AppError) return error;
     if (error instanceof ZodError)

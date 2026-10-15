@@ -8,6 +8,9 @@ import { Logger } from './logger/index.js';
 import AnalysisQueue from './queues/analysis.queue.js';
 import { AnalysisWorker } from './workers/index.js';
 
+/**
+ * Starts the HTTP server and manages application resources.
+ */
 class Server {
   private readonly config: AppConfig;
   private readonly database: DatabaseConfig;
@@ -19,6 +22,9 @@ class Server {
   private queue: AnalysisQueue | undefined;
   private worker: AnalysisWorker | undefined;
 
+  /**
+   * Initializes the server instance.
+   */
   constructor() {
     this.env = new EnvConfig();
     this.config = new AppConfig();
@@ -35,6 +41,9 @@ class Server {
     });
   }
 
+  /**
+   * Starts server processing and its required resources.
+   */
   private async start(): Promise<void> {
     await this.database.connect();
     await this.redis.getClient().ping();
@@ -49,6 +58,9 @@ class Server {
     });
   }
 
+  /**
+   * Registers shutdown handlers with the application.
+   */
   private registerShutdownHandlers(): void {
     process.on('SIGINT', () => {
       void this.shutdown('SIGINT');
@@ -59,6 +71,10 @@ class Server {
     });
   }
 
+  /**
+   * Releases server resources and completes shutdown.
+   * @param signal - The signal value used by this operation.
+   */
   private async shutdown(signal: string): Promise<void> {
     this.logger.info(`Received ${signal}. Starting graceful shutdown...`);
 
@@ -79,6 +95,9 @@ class Server {
     });
   }
 
+  /**
+   * Releases server resources and completes shutdown.
+   */
   private async closeResources(): Promise<void> {
     await this.worker?.close();
     await this.queue?.close();

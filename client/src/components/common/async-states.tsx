@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom';
  */
 export function LoadingState({ label = 'Loading your workspace' }: { label?: string }) {
   return (
-    <div className="state-card" role="status">
-      <LoaderCircle className="spin text-brand" size={22} />
-      <span>{label}</span>
+    <div className="state-card state-loading" role="status" aria-live="polite">
+      <LoaderCircle className="spin text-brand" size={22} aria-hidden="true" />
+      <span className="state-label">{label}</span>
     </div>
   );
 }
@@ -20,8 +20,11 @@ export function LoadingState({ label = 'Loading your workspace' }: { label?: str
  */
 export function LoadingScreen({ label }: { label: string }) {
   return (
-    <main className="loading-screen">
-      <LoadingState label={label} />
+    <main className="loading-screen" role="status" aria-live="polite">
+      <div className="loading-screen-inner">
+        <LoaderCircle className="spin text-brand" size={28} aria-hidden="true" />
+        <span className="state-label">{label}</span>
+      </div>
     </main>
   );
 }
@@ -33,10 +36,19 @@ export function LoadingScreen({ label }: { label: string }) {
 export function ErrorState({ message, retry }: { message: string; retry?: () => void }) {
   return (
     <div className="state-card state-error" role="alert">
-      <AlertCircle size={20} />
-      <span>{message}</span>
+      <div className="state-error-icon" aria-hidden="true">
+        <AlertCircle size={20} />
+      </div>
+      <div className="state-error-content">
+        <strong className="state-error-title">An error occurred</strong>
+        <p className="state-error-message">{message}</p>
+      </div>
       {retry && (
-        <button className="button button-small button-outline" onClick={retry}>
+        <button
+          type="button"
+          className="button button-small button-outline state-retry-btn"
+          onClick={retry}
+        >
           Try again
         </button>
       )}
@@ -59,13 +71,13 @@ export function EmptyState({
 }) {
   return (
     <div className="empty-state">
-      <span className="empty-icon">
-        <Boxes size={22} />
+      <span className="empty-icon" aria-hidden="true">
+        <Boxes size={24} />
       </span>
-      <h3>{title}</h3>
-      <p>{description}</p>
+      <h3 className="empty-title">{title}</h3>
+      <p className="empty-description">{description}</p>
       {action && (
-        <Link className="button button-primary button-small" to={action.to}>
+        <Link className="button button-primary button-small empty-action" to={action.to}>
           {action.label}
         </Link>
       )}

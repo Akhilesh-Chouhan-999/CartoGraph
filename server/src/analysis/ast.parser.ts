@@ -2,12 +2,20 @@ import { Project, ScriptKind, SyntaxKind } from 'ts-morph';
 
 import type { DependencyCandidate, DependencyKind } from './analysis.types.js';
 
+/**
+ * Parses source code into structured analysis data.
+ */
 class AstParser {
   private readonly project = new Project({
     useInMemoryFileSystem: true,
     skipAddingFilesFromTsConfig: true,
   });
 
+  /**
+   * Parses source code and extracts dependency candidates with source locations.
+   * @param sourcePath - The source path value used by this operation.
+   * @param content - The content value used by this operation.
+   */
   public parse(sourcePath: string, content: string): DependencyCandidate[] {
     const source = this.project.createSourceFile(sourcePath, content, {
       overwrite: true,
@@ -55,6 +63,13 @@ class AstParser {
     );
   }
 
+  /**
+   * Creates a dependency candidate with its source location.
+   * @param sourcePath - The source path value used by this operation.
+   * @param targetSpecifier - The target specifier value used by this operation.
+   * @param type - The type value used by this operation.
+   * @param line - The line value used by this operation.
+   */
   private candidate(
     sourcePath: string,
     targetSpecifier: string,
@@ -64,6 +79,10 @@ class AstParser {
     return { sourcePath, targetSpecifier, type, line };
   }
 
+  /**
+   * Selects the TypeScript parser mode for the source file extension.
+   * @param filePath - The file path value used by this operation.
+   */
   private getScriptKind(filePath: string): ScriptKind {
     if (filePath.endsWith('.tsx')) return ScriptKind.TSX;
     if (filePath.endsWith('.jsx')) return ScriptKind.JSX;

@@ -12,6 +12,9 @@ import {
   ProjectRepository,
 } from '../repositories/index.js';
 
+/**
+ * Processes repository analysis jobs asynchronously.
+ */
 class AnalysisWorker {
   private readonly worker: Worker<AnalysisJobData>;
   private readonly analyzer = new RepositoryAnalyzer();
@@ -21,6 +24,10 @@ class AnalysisWorker {
   private readonly dependencies = new DependencyRepository();
   private readonly logger = new Logger();
 
+  /**
+   * Initializes the analysis worker instance.
+   * @param connection - The connection value used by this operation.
+   */
   constructor(connection: Redis) {
     this.worker = new Worker<AnalysisJobData>(ANALYSIS_QUEUE_NAME, (job) => this.process(job), {
       connection: connection.duplicate({ maxRetriesPerRequest: null }),
@@ -36,10 +43,17 @@ class AnalysisWorker {
     );
   }
 
+  /**
+   * Releases analysis worker resources and completes shutdown.
+   */
   public async close(): Promise<void> {
     await this.worker.close();
   }
 
+  /**
+   * Processes the supplied analysis worker work item.
+   * @param job - The job value used by this operation.
+   */
   private async process(job: Job<AnalysisJobData>): Promise<void> {
     const { analysisId, projectId, commitSha } = job.data;
     this.logger.info(`Analysis ${analysisId} started`);

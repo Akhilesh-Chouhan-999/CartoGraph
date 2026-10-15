@@ -9,6 +9,9 @@ import HashUtil from '../utils/hash.util.js';
 import { AppError } from '../errors/index.js';
 import type { AnalyzedSourceFile, DependencyCandidate } from './analysis.types.js';
 
+/**
+ * Analyzes repositories and coordinates the static analysis pipeline.
+ */
 class RepositoryAnalyzer {
   private readonly github = new GitHubService();
   private readonly scanner = new FileScanner();
@@ -18,6 +21,10 @@ class RepositoryAnalyzer {
   private readonly graphBuilder = new GraphBuilder();
   private readonly hashes = new HashUtil();
 
+  /**
+   * Runs the static analysis pipeline for the selected repository commit.
+   * @param input - The input value to process.
+   */
   public async analyze(input: { githubUrl: string; commitSha: string }): Promise<{
     commitSha: string;
     files: AnalyzedSourceFile[];
@@ -78,6 +85,10 @@ class RepositoryAnalyzer {
     return { commitSha: commit.sha, files, graph: this.graphBuilder.build(files, resolved) };
   }
 
+  /**
+   * Checks whether the supplied file contents contain binary data.
+   * @param content - The content value used by this operation.
+   */
   private isBinary(content: string): boolean {
     for (let index = 0; index < content.length; index += 1) {
       const code = content.charCodeAt(index);

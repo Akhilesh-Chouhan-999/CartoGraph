@@ -6,11 +6,21 @@ import { AppError } from '../errors/index.js';
 import { EnvConfig } from '../config/index.js';
 import type { AuthUser } from '../types/index.js';
 
+/**
+ * Provides middleware for auth request handling.
+ */
 class AuthMiddleware {
   private readonly env = new EnvConfig();
 
+  /**
+   * Initializes the auth middleware instance.
+   * @param redis - The redis value used by this operation.
+   */
   constructor(private readonly redis: Redis) {}
 
+  /**
+   * Authenticates the request and attaches the verified user identity.
+   */
   public authenticate(): RequestHandler {
     return (req, _res, next) => {
       const authorization = req.header('authorization');
@@ -32,6 +42,10 @@ class AuthMiddleware {
     };
   }
 
+  /**
+   * Verifies the supplied auth data before it is used.
+   * @param token - The authentication token.
+   */
   private async verify(token: string): Promise<AuthUser> {
     const payload = jwt.verify(token, this.env.jwtSecret);
     if (

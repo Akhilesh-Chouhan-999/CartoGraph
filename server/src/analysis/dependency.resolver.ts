@@ -16,7 +16,15 @@ const extensions = [
   '/index.jsx',
 ];
 
+/**
+ * Resolves dependency references against known files.
+ */
 class DependencyResolver {
+  /**
+   * Resolves relative dependency specifiers to files in the scanned repository.
+   * @param candidates - The candidates value used by this operation.
+   * @param availablePaths - The available paths value used by this operation.
+   */
   public resolve(
     candidates: DependencyCandidate[],
     availablePaths: ReadonlySet<string>,

@@ -1,6 +1,13 @@
 import type { FileRole } from './analysis.types.js';
 
+/**
+ * Classifies source files into architecture roles using deterministic rules.
+ */
 class RoleClassifier {
+  /**
+   * Assigns a deterministic architecture role to the file path.
+   * @param filePath - The file path value used by this operation.
+   */
   public classify(filePath: string): FileRole {
     const lower = filePath.toLowerCase();
     if (/\.test\.[cm]?[jt]sx?$/.test(lower) || /\.spec\.[cm]?[jt]sx?$/.test(lower)) return 'test';

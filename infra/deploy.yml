@@ -1,0 +1,119 @@
+name: CartoGraph CI & Azure Deployment
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
+jobs:
+  validate:
+    name: Test & Build Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies (root & workspaces)
+        run: npm ci
+
+      - name: Verify Client Type Check & Test
+        working-directory: ./client
+        run: |
+          npm run test
+          npm run build
+
+      - name: Verify Server Type Check & Test
+        working-directory: ./server
+        run: |
+          npm run type-check
+          npm run test
+          npm run build
+
+  deploy:
+    name: Build & Deploy to Azure
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}-server
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure (OIDC / Federated Credentials)
+        uses: azure/login@v2
+        if: ${{ env.AZURE_CLIENT_ID != '' }}
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Server Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.server
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy Azure Infrastructure (Bicep)
+        if: ${{ env.AZURE_CLIENT_ID != '' }}
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        run: |
+          az deployment group create \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --template-file ./infra/main.bicep \
+            --parameters ./infra/main.parameters.json \
+            --parameters \
+              serverImage=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+              jwtSecret="${{ secrets.JWT_SECRET }}" \
+              mongoUri="${{ secrets.MONGO_URI }}" \
+              redisUrl="${{ secrets.REDIS_URL }}" \
+              githubToken="${{ secrets.APP_GITHUB_TOKEN }}" \
+              openaiApiKey="${{ secrets.OPENAI_API_KEY }}"
+
+      - name: Build Frontend for Production
+        working-directory: ./client
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy Frontend to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        if: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: ./client/dist
+          output_location: ''
+          skip_app_build: true

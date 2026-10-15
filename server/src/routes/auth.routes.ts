@@ -5,9 +5,16 @@ import { AuthController } from '../controllers/index.js';
 import { AuthMiddleware, ValidationMiddleware } from '../middleware/index.js';
 import { loginSchema, registerSchema } from '../schemas/index.js';
 
+/**
+ * Registers the auth API routes.
+ */
 class AuthRoutes {
   public readonly router = Router();
 
+  /**
+   * Initializes the auth routes instance.
+   * @param redis - The redis value used by this operation.
+   */
   constructor(redis: Redis) {
     const auth = new AuthMiddleware(redis).authenticate();
     const validation = new ValidationMiddleware();

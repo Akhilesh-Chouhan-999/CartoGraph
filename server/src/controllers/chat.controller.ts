@@ -7,15 +7,27 @@ import { AppError } from '../errors/index.js';
 import { chatMessageSchema, createChatSessionSchema } from '../schemas/index.js';
 import { idParamsSchema } from '../schemas/index.js';
 
+/**
+ * Handles HTTP requests for chat operations.
+ */
 class ChatController {
   private readonly chat: ChatService;
   private readonly analyses: AnalysisService;
 
+  /**
+   * Initializes the chat controller instance.
+   * @param queue - The queue value used by this operation.
+   */
   constructor(queue: AnalysisQueue) {
     this.analyses = new AnalysisService(queue);
     this.chat = new ChatService(this.analyses);
   }
 
+  /**
+   * Sends a repository question to the grounded AI agent and returns its answer.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public ask: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -30,6 +42,11 @@ class ChatController {
     });
   };
 
+  /**
+   * Creates a chat session for the selected project and analysis.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public createSession: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -44,6 +61,11 @@ class ChatController {
     });
   };
 
+  /**
+   * Retrieves a chat session after checking the requesting user owns its project.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public getSession: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -51,6 +73,11 @@ class ChatController {
     res.json({ success: true, data: await this.chat.getSession(userId, id) });
   };
 
+  /**
+   * Retrieves the messages saved in the selected chat session.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public messages: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -58,6 +85,11 @@ class ChatController {
     res.json({ success: true, data: await this.chat.getMessages(userId, id) });
   };
 
+  /**
+   * Removes the requested chat data.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public deleteSession: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);

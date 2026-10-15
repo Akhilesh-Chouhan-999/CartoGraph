@@ -4,18 +4,24 @@ import {
   Controls,
   MiniMap,
   ReactFlow,
+  ReactFlowProvider,
   useEdgesState,
   useNodesState,
   useReactFlow,
+  useViewport,
   type Edge,
   type Node,
 } from '@xyflow/react';
 import {
+  AlertTriangle,
   Bot,
   Crosshair,
   FileCode2,
   Filter,
+  Lock,
   Maximize,
+  Minus,
+  Plus,
   RotateCcw,
   Search,
   Waypoints,
@@ -24,7 +30,7 @@ import {
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-import { ErrorState, LoadingState } from '../../components/common/async-states.js';
+import { EmptyState, ErrorState, LoadingState } from '../../components/common/async-states.js';
 import { roleStyles, toFlowGraph, type GraphNodeData } from '../../utils/graph-layout.js';
 import { graphService } from '../../services/graph/graph.service.js';
 import { errorMessage } from '../../services/api/api-client.js';
@@ -67,15 +73,25 @@ const legendLabels: Record<FileRole, string> = {
  * Renders the graph page interface.
  */
 export function GraphPage() {
+  return (
+    <ReactFlowProvider>
+      <GraphPageContent />
+    </ReactFlowProvider>
+  );
+}
+
+function GraphPageContent() {
   const { analysisId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { fitView } = useReactFlow();
   const [graph, setGraph] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
   const [selectedId, setSelectedId] = useState('');
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<FileRole | 'all'>('all');
+  const [isLocked, setIsLocked] = useState(false);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<GraphNodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
@@ -103,7 +119,7 @@ export function GraphPage() {
     return () => {
       active = false;
     };
-  }, [analysisId]);
+  }, [analysisId, reloadKey]);
 
   const converted = useMemo(() => (graph ? toFlowGraph(graph) : null), [graph]);
   useEffect(() => {
@@ -175,7 +191,17 @@ export function GraphPage() {
 
   const selected = graph?.nodes.find((node) => node.id === selectedId) ?? null;
   if (loading) return <LoadingState label="Building dependency graph" />;
-  if (error || !graph) return <ErrorState message={error || 'Graph data is unavailable.'} />;
+  if (error || !graph)
+    return (
+      <ErrorState
+        message={error || 'Graph data is unavailable.'}
+        retry={() => {
+          setError('');
+          setLoading(true);
+          setReloadKey((key) => key + 1);
+        }}
+      />
+    );
 
   /**
    * Selects the clicked graph node and opens its file details.
@@ -212,6 +238,7 @@ export function GraphPage() {
           <label className="graph-search">
             <Search size={16} />
             <input
+              aria-label="Search files in dependency graph"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search files"
@@ -241,8 +268,11 @@ export function GraphPage() {
         </div>
       </div>
       {graph.nodes.length === 0 ? (
-        <div className="graph-empty">
-          <ErrorState message="This analysis does not contain any graph nodes." />
+        <div className="graph-empty panel">
+          <EmptyState
+            title="No graph nodes in this analysis"
+            description="This analysis did not produce any files to map. Try scanning a repository with supported JavaScript or TypeScript files."
+          />
         </div>
       ) : (
         <div className="graph-workspace">
@@ -257,7 +287,8 @@ export function GraphPage() {
               fitViewOptions={{ padding: 0.2 }}
               minZoom={0.12}
               maxZoom={2.2}
-              nodesDraggable
+              nodesDraggable={!isLocked}
+              panOnDrag={!isLocked}
               nodesConnectable={false}
               proOptions={{ hideAttribution: true }}
             >
@@ -275,6 +306,11 @@ export function GraphPage() {
                 nodeColor={(node) => roleStyles[(node.data as GraphNodeData).file.role].color}
               />
             </ReactFlow>
+            <FloatingCanvasControls
+              isLocked={isLocked}
+              setIsLocked={setIsLocked}
+              onFitView={() => void fitView({ padding: 0.2 })}
+            />
             <div className="graph-legend">
               <div className="legend-heading">
                 <span>Graph Node Styles</span>
@@ -292,6 +328,21 @@ export function GraphPage() {
             <div className="graph-count">
               <Crosshair size={14} /> {nodes.length} visible nodes
             </div>
+            {nodes.length === 0 && (
+              <div className="graph-filter-empty">
+                <strong>No files match these filters</strong>
+                <span>Try a different search term or role.</span>
+                <button
+                  className="button button-outline button-small"
+                  onClick={() => {
+                    setQuery('');
+                    setRoleFilter('all');
+                  }}
+                >
+                  Clear filters
+                </button>
+              </div>
+            )}
           </section>
           {selected && (
             <GraphDetailsPanel
@@ -347,16 +398,25 @@ function GraphDetailsPanel({
     const node = edge.target === file.id ? byId.get(edge.source) : undefined;
     return node ? [{ edge, node }] : [];
   });
+  const role = roleStyles[file.role];
   return (
     <aside className="graph-details">
       <div className="details-title-row">
-        <div>
+        <div className="details-title-copy">
           <span className="inspector-heading">File Info Details</span>
+          <h2 title={file.path}>{file.path.split('/').at(-1)}</h2>
+          <code className="details-file-path" title={file.path}>
+            {file.path}
+          </code>
+          <span className="role-pill" style={{ background: role.background, color: role.color }}>
+            {role.label}
+          </span>
+        </div>
+        <div className="details-close">
           <button className="icon-button" onClick={onClose} aria-label="Close details">
             <X size={17} />
           </button>
         </div>
-        <h2>{file.path.split('/').at(-1)}</h2>
       </div>
       <div className="graph-detail-actions">
         <Link
@@ -372,10 +432,10 @@ function GraphDetailsPanel({
           <Waypoints size={15} /> Find Path
         </Link>
         <Link
-          className="button button-soft button-small"
+          className="button button-blast-radius button-small"
           to={`/analyses/${analysisId}/files/${file.id}/blast-radius`}
         >
-          <Crosshair size={15} /> Calculate Blast Radius
+          <AlertTriangle size={15} /> Calculate Blast Radius
         </Link>
         <Link
           className="button button-outline button-small"
@@ -393,6 +453,16 @@ function GraphDetailsPanel({
         <div>
           <span>Fan-out</span>
           <strong>{file.fanOut}</strong>
+        </div>
+      </div>
+      <div className="file-quick-meta">
+        <div>
+          <span>Language</span>
+          <strong>{file.language || 'Unknown'}</strong>
+        </div>
+        <div>
+          <span>Lines</span>
+          <strong>{file.lines.toLocaleString()}</strong>
         </div>
       </div>
       <DependencyMiniList
@@ -439,3 +509,76 @@ function DependencyMiniList({
     </div>
   );
 }
+
+function FloatingCanvasControls({
+  isLocked,
+  setIsLocked,
+  onFitView,
+}: {
+  isLocked: boolean;
+  setIsLocked: (value: boolean | ((prev: boolean) => boolean)) => void;
+  onFitView: () => void;
+}) {
+  const { zoom } = useViewport();
+  const { zoomIn, zoomOut } = useReactFlow();
+  const zoomPercent = Math.round(zoom * 100);
+
+  return (
+    <>
+      <div className="canvas-floating-top-right">
+        <div className="zoom-pill">
+          <button
+            type="button"
+            className="zoom-btn"
+            onClick={() => void zoomOut({ duration: 200 })}
+            aria-label="Zoom out"
+          >
+            <Minus size={14} />
+          </button>
+          <span className="zoom-level">{zoomPercent}%</span>
+          <button
+            type="button"
+            className="zoom-btn"
+            onClick={() => void zoomIn({ duration: 200 })}
+            aria-label="Zoom in"
+          >
+            <Plus size={14} />
+          </button>
+          <div className="zoom-sep" />
+          <button
+            type="button"
+            className="zoom-btn"
+            onClick={onFitView}
+            aria-label="Fit view"
+            title="Fit to view"
+          >
+            <Maximize size={14} />
+          </button>
+          <button
+            type="button"
+            className={`zoom-btn ${isLocked ? 'active' : ''}`}
+            onClick={() => setIsLocked((prev) => !prev)}
+            aria-label={isLocked ? 'Unlock canvas' : 'Lock canvas'}
+            title={isLocked ? 'Unlock canvas' : 'Lock canvas'}
+          >
+            <Lock size={14} />
+          </button>
+        </div>
+      </div>
+      <div className="canvas-floating-bottom-left">
+        <div className="canvas-vert-controls">
+          <button
+            type="button"
+            className="tool-btn"
+            onClick={onFitView}
+            title="Recenter view"
+            aria-label="Recenter view"
+          >
+            <Crosshair size={15} />
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+

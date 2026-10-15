@@ -3,7 +3,16 @@ export interface DirectedEdge<T extends string = string> {
   target: T;
 }
 
+/**
+ * Provides graph algorithms for dependency analysis.
+ */
 class GraphAlgorithms {
+  /**
+   * Finds the shortest directed dependency path between two graph nodes.
+   * @param edges - The edges value used by this operation.
+   * @param source - The source file or value.
+   * @param target - The target file or value.
+   */
   public shortestPath<T extends string>(
     edges: readonly DirectedEdge<T>[],
     source: T,
@@ -28,6 +37,11 @@ class GraphAlgorithms {
     return null;
   }
 
+  /**
+   * Finds direct and transitive files that depend on the specified node.
+   * @param edges - The edges value used by this operation.
+   * @param target - The target file or value.
+   */
   public dependents<T extends string>(
     edges: readonly DirectedEdge<T>[],
     target: T,
@@ -48,6 +62,11 @@ class GraphAlgorithms {
     return { direct, transitive: [...visited].filter((id) => !direct.includes(id)).sort() };
   }
 
+  /**
+   * Builds a sorted adjacency map from dependency edges.
+   * @param edges - The edges value used by this operation.
+   * @param reverse - The reverse value used by this operation.
+   */
   private adjacency<T extends string>(
     edges: readonly DirectedEdge<T>[],
     reverse: boolean,
@@ -64,6 +83,12 @@ class GraphAlgorithms {
     return map;
   }
 
+  /**
+   * Reconstructs a path from the recorded parent relationships.
+   * @param parent - The parent value used by this operation.
+   * @param source - The source file or value.
+   * @param target - The target file or value.
+   */
   private reconstruct<T extends string>(parent: ReadonlyMap<T, T>, source: T, target: T): T[] {
     const result: T[] = [target];
     let current = target;

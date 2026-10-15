@@ -23,7 +23,16 @@ const ignored = new Set([
   'vendor',
 ]);
 
+/**
+ * Scans repository files and collects supported source metadata.
+ */
 class FileScanner {
+  /**
+   * Scans the repository tree and returns supported source files.
+   * @param entries - The entries value used by this operation.
+   * @param maxFiles - The max files value used by this operation.
+   * @param maxFileBytes - The max file bytes value used by this operation.
+   */
   public scan(
     entries: GitHubTreeEntry[],
     maxFiles: number,

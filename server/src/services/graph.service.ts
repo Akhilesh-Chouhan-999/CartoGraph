@@ -2,15 +2,28 @@ import { AppError } from '../errors/index.js';
 import { DependencyRepository, FileRepository } from '../repositories/index.js';
 import AnalysisService from './analysis.service.js';
 
+/**
+ * Coordinates graph application logic.
+ */
 class GraphService {
   private readonly files = new FileRepository();
   private readonly dependencies = new DependencyRepository();
   private readonly analyses: AnalysisService;
 
+  /**
+   * Initializes the graph service instance.
+   * @param analyses - The analyses value used by this operation.
+   */
   constructor(analyses: AnalysisService) {
     this.analyses = analyses;
   }
 
+  /**
+   * Counts the incoming dependency edges for each file.
+   * @param userId - The user identifier.
+   * @param analysisId - The analysis identifier.
+   * @param fileId - The file identifier.
+   */
   public async calculateFanIn(userId: string, analysisId: string, fileId: string): Promise<number> {
     const { nodes, edges } = await this.getGraph(userId, analysisId);
     if (!nodes.some((file) => file.id === fileId)) {
@@ -19,6 +32,12 @@ class GraphService {
     return edges.filter((edge) => edge.target === fileId).length;
   }
 
+  /**
+   * Counts the outgoing dependency edges for each file.
+   * @param userId - The user identifier.
+   * @param analysisId - The analysis identifier.
+   * @param fileId - The file identifier.
+   */
   public async calculateFanOut(
     userId: string,
     analysisId: string,
@@ -31,6 +50,11 @@ class GraphService {
     return edges.filter((edge) => edge.source === fileId).length;
   }
 
+  /**
+   * Retrieves graph nodes and dependency edges for the analysis.
+   * @param userId - The user identifier.
+   * @param analysisId - The analysis identifier.
+   */
   public async getGraph(userId: string, analysisId: string) {
     await this.analyses.getAnalysis(userId, analysisId);
     const [files, dependencies] = await Promise.all([
@@ -57,6 +81,11 @@ class GraphService {
     };
   }
 
+  /**
+   * Calculates file, dependency, language, role, and graph metric summaries.
+   * @param userId - The user identifier.
+   * @param analysisId - The analysis identifier.
+   */
   public async getProjectStats(userId: string, analysisId: string) {
     const { nodes, edges } = await this.getGraph(userId, analysisId);
     const languages = new Map<string, number>();

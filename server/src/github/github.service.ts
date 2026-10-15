@@ -27,15 +27,27 @@ const blobResponseSchema = z.object({
   size: z.number().int().nonnegative(),
 });
 
+/**
+ * Coordinates git hub application logic.
+ */
 class GitHubService {
   private readonly client: GitHubClient;
   private readonly urls: GitHubUrlUtil;
 
+  /**
+   * Initializes the git hub service instance.
+   * @param client - The client value used by this operation.
+   * @param urls - The urls value used by this operation.
+   */
   constructor(client = new GitHubClient(), urls = new GitHubUrlUtil()) {
     this.client = client;
     this.urls = urls;
   }
 
+  /**
+   * Retrieves metadata for the requested GitHub repository.
+   * @param githubUrl - The github url value used by this operation.
+   */
   public async getRepository(githubUrl: string): Promise<GitHubRepository> {
     const address = this.urls.parse(githubUrl);
     const result = repositoryResponseSchema.parse(
@@ -46,6 +58,12 @@ class GitHubService {
     return { owner: result.owner.login, name: result.name, defaultBranch: result.default_branch };
   }
 
+  /**
+   * Retrieves metadata for the exact GitHub commit.
+   * @param owner - The GitHub repository owner.
+   * @param repository - The GitHub repository name.
+   * @param ref - The ref value used by this operation.
+   */
   public async getCommit(owner: string, repository: string, ref: string): Promise<GitHubCommit> {
     const result = commitResponseSchema.parse(
       await this.client.request(
@@ -55,6 +73,12 @@ class GitHubService {
     return { sha: result.sha, treeSha: result.commit.tree.sha };
   }
 
+  /**
+   * Retrieves the repository tree for the selected commit.
+   * @param owner - The GitHub repository owner.
+   * @param repository - The GitHub repository name.
+   * @param treeSha - The tree sha value used by this operation.
+   */
   public async getTree(
     owner: string,
     repository: string,
@@ -75,6 +99,12 @@ class GitHubService {
     }));
   }
 
+  /**
+   * Retrieves the contents of a GitHub blob.
+   * @param owner - The GitHub repository owner.
+   * @param repository - The GitHub repository name.
+   * @param sha - The sha value used by this operation.
+   */
   public async getBlob(owner: string, repository: string, sha: string): Promise<string> {
     const result = blobResponseSchema.parse(
       await this.client.request(

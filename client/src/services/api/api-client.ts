@@ -3,10 +3,11 @@ import axios, { AxiosError, type AxiosResponse } from 'axios';
 import { clearToken, getToken } from '../auth/token-storage.js';
 import type { ApiEnvelope, ApiErrorEnvelope } from '../../types/domain.js';
 
-const baseURL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000').replace(/\/$/, '');
+const rawBase = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000').replace(/\/$/, '');
+const baseURL = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`;
 
 export const apiClient = axios.create({
-  baseURL: `${baseURL}/api`,
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30_000,
 });

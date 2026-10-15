@@ -6,9 +6,17 @@ import { AuthMiddleware, ValidationMiddleware } from '../middleware/index.js';
 import { createProjectSchema, updateProjectSchema } from '../schemas/index.js';
 import type AnalysisQueue from '../queues/analysis.queue.js';
 
+/**
+ * Registers the project API routes.
+ */
 class ProjectRoutes {
   public readonly router = Router();
 
+  /**
+   * Initializes the project routes instance.
+   * @param queue - The queue value used by this operation.
+   * @param redis - The redis value used by this operation.
+   */
   constructor(queue: AnalysisQueue, redis: Redis) {
     const auth = new AuthMiddleware(redis).authenticate();
     const validation = new ValidationMiddleware();

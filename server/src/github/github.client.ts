@@ -1,13 +1,24 @@
 import { AppError } from '../errors/index.js';
 import { GitHubConfig } from '../config/index.js';
 
+/**
+ * Provides an authenticated HTTP client for the external API.
+ */
 class GitHubClient {
   private readonly config: GitHubConfig;
 
+  /**
+   * Initializes the git hub client instance.
+   * @param config - The config value used by this operation.
+   */
   constructor(config = new GitHubConfig()) {
     this.config = config;
   }
 
+  /**
+   * Sends an authenticated request to the GitHub REST API.
+   * @param pathname - The pathname value used by this operation.
+   */
   public async request(pathname: string): Promise<unknown> {
     const response = await fetch(`${this.config.apiBaseUrl}${pathname}`, {
       headers: {

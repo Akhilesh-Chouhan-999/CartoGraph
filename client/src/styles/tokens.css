@@ -1,35 +1,50 @@
 :root {
   color-scheme: light;
 
-  /* CartoGraph interface palette */
-  --page-background: #f4f6f9;
-  --surface-secondary: #f7f8fa;
-  --border: #d9dee7;
-  --border-subtle: #e8ebf0;
-  --primary: #3478e5;
-  --primary-hover: #2466ce;
-  --primary-light: #e6efff;
-  --cyan: #39c4d1;
-  --text-primary: #121a2b;
-  --text-secondary: #465266;
-  --text-muted: #788394;
-  --success: #249760;
-  --warning: #d78334;
-  --error: #d54d52;
-  --graph-entry: #3478e5;
-  --graph-controller: #39bdca;
-  --graph-service: #bc79e8;
-  --graph-repository: #ed934d;
-  --graph-model: #69b583;
-  --graph-other: #aab1bc;
-  --graph-entry-surface: #eaf1ff;
-  --graph-controller-surface: #edfbfc;
-  --graph-service-surface: #fbf4ff;
-  --graph-repository-surface: #fff7f0;
-  --graph-model-surface: #f1faf4;
-  --graph-other-surface: #f6f7f9;
-  --graph-dot: #cbd3dd;
+  /* CartoGraph core palette */
+  --page-background: #f8fafc;
+  --surface: #ffffff;
+  --surface-secondary: #f1f5f9;
+  --surface-hover: #f8fafc;
+  --border: #cbd5e1;
+  --border-subtle: #e2e8f0;
 
+  /* Brand and Accent */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --cyan: #0891b2;
+  --cyan-light: #ecfeff;
+
+  /* Semantic status colors */
+  --success: #16a34a;
+  --success-surface: #f0fdf4;
+  --warning: #d97706;
+  --warning-surface: #fffbeb;
+  --error: #dc2626;
+  --error-surface: #fef2f2;
+
+  /* Text hierarchy (WCAG AA compliant contrast) */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  /* Graph role palette */
+  --graph-entry: #2563eb;
+  --graph-controller: #0891b2;
+  --graph-service: #9333ea;
+  --graph-repository: #ea580c;
+  --graph-model: #16a34a;
+  --graph-other: #64748b;
+  --graph-entry-surface: #eff6ff;
+  --graph-controller-surface: #ecfeff;
+  --graph-service-surface: #faf5ff;
+  --graph-repository-surface: #fff7ed;
+  --graph-model-surface: #f0fdf4;
+  --graph-other-surface: #f8fafc;
+  --graph-dot: #cbd5e1;
+
+  /* Compatibility aliases */
   --ink: var(--text-primary);
   --muted: var(--text-muted);
   --line: var(--border-subtle);
@@ -37,24 +52,34 @@
   --blue: var(--primary);
   --blue-dark: var(--primary-hover);
   --blue-pale: var(--primary-light);
-  --surface: #fff;
-  --shadow: 0 2px 6px rgb(20 35 60 / 8%);
 
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.04);
+
+  /* Typography scale */
   --font-sans:
-    Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  --text-page-title: 25px;
-  --text-section-title: 17px;
-  --text-card-title: 14px;
-  --text-body: 13px;
-  --text-secondary-size: 12px;
-  --text-metadata: 11px;
-  --text-label: 12px;
-  --text-button: 13px;
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    monospace;
 
-  --sidebar-width: 230px;
-  --topbar-height: 52px;
-  --graph-inspector-width: 236px;
-  --page-gutter: 24px;
-  --panel-radius: 7px;
-  --control-radius: 5px;
+  --text-page-title: 28px;
+  --text-section-title: 18px;
+  --text-card-title: 15px;
+  --text-body: 15px;
+  --text-secondary-size: 13px;
+  --text-metadata: 12px;
+  --text-label: 12px;
+  --text-button: 14px;
+
+  /* Layout dimensions */
+  --sidebar-width: 240px;
+  --topbar-height: 58px;
+  --graph-inspector-width: 260px;
+  --page-gutter: 28px;
+  --panel-radius: 10px;
+  --control-radius: 7px;
 }

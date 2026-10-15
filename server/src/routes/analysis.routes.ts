@@ -11,9 +11,17 @@ import { AuthMiddleware, RateLimitMiddleware, ValidationMiddleware } from '../mi
 import { chatMessageSchema, createAnalysisSchema } from '../schemas/index.js';
 import type AnalysisQueue from '../queues/analysis.queue.js';
 
+/**
+ * Registers the analysis API routes.
+ */
 class AnalysisRoutes {
   public readonly router = Router();
 
+  /**
+   * Initializes the analysis routes instance.
+   * @param queue - The queue value used by this operation.
+   * @param redis - The redis value used by this operation.
+   */
   constructor(queue: AnalysisQueue, redis: Redis) {
     const auth = new AuthMiddleware(redis).authenticate();
     const validation = new ValidationMiddleware();

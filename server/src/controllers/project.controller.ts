@@ -5,9 +5,17 @@ import { createProjectSchema, updateProjectSchema } from '../schemas/index.js';
 import ProjectService from '../services/project.service.js';
 import { idParamsSchema } from '../schemas/index.js';
 
+/**
+ * Handles HTTP requests for project operations.
+ */
 class ProjectController {
   private readonly projects = new ProjectService();
 
+  /**
+   * Creates a project record from the validated input.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public create: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -15,12 +23,22 @@ class ProjectController {
     res.status(201).json({ success: true, data: project });
   };
 
+  /**
+   * Lists project records available to the current user.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public list: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
     res.json({ success: true, data: await this.projects.getUserProjects(userId) });
   };
 
+  /**
+   * Retrieves the selected project record.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public get: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -28,6 +46,11 @@ class ProjectController {
     res.json({ success: true, data: await this.projects.getProject(userId, id) });
   };
 
+  /**
+   * Applies the supplied changes to the selected project.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public update: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -41,6 +64,11 @@ class ProjectController {
     res.json({ success: true, data: await this.projects.updateProject(userId, id, patch) });
   };
 
+  /**
+   * Removes the selected project record.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public remove: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);

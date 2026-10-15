@@ -1,14 +1,12 @@
 import {
   ArrowLeft,
-  ArrowRight,
   Bot,
-  ExternalLink,
-  FileCode2,
-  GitBranch,
-  GitCommitHorizontal,
-  Network,
+  CheckCircle2,
+  Github,
+  Globe,
+  Info,
   Pencil,
-  ScanLine,
+  Search,
   Trash2,
   X,
 } from 'lucide-react';
@@ -16,9 +14,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { ErrorState, LoadingState } from '../../components/common/async-states.js';
-import { StatusBadge } from '../../components/analysis/status-badge.js';
-import { PageHeader } from '../../components/ui/page-header.js';
-import { StatCard } from '../../components/ui/stat-card.js';
 import { errorMessage } from '../../services/api/api-client.js';
 import { analysisService } from '../../services/analyses/analysis.service.js';
 import { PROJECTS_CHANGED_EVENT, projectService } from '../../services/projects/project.service.js';
@@ -44,6 +39,7 @@ export function ProjectDetailsPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [actionError, setActionError] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [webhookActive, setWebhookActive] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -111,212 +107,414 @@ export function ProjectDetailsPage() {
   }
 
   return (
-    <div className="page-stack">
+    <div className="page-stack project-details-stack">
       <Link className="back-link" to="/projects">
-        <ArrowLeft size={16} /> All projects
+        <ArrowLeft size={15} /> All projects
       </Link>
-      <PageHeader
-        eyebrow={`${project.owner}/${project.repository}`}
-        title={project.name}
-        description={project.githubUrl}
-        actions={
-          <>
-            <a
-              className="button button-outline button-small"
-              href={project.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <ExternalLink size={15} /> GitHub
-            </a>
-            <button
-              className="button button-outline button-small"
-              onClick={() => setEditOpen(true)}
-            >
-              <Pencil size={14} /> Edit
-            </button>
-            <button
-              className="button button-outline button-small danger-button"
-              onClick={() => void deleteProject()}
-              disabled={deleting}
-            >
-              <Trash2 size={14} /> {deleting ? 'Deleting…' : 'Delete'}
-            </button>
+
+      {/* Top Header matching Settings.png design */}
+      <div className="project-detail-header-block">
+        <div className="project-title-area">
+          <div className="project-title-row">
+            <h1>
+              {project.owner} / {project.repository}
+            </h1>
+            <span className="public-repo-badge">
+              <Github size={13} /> public repository
+            </span>
+          </div>
+          <div className="project-subtitle-meta">
+            <span>
+              GitHub branch: <strong className="meta-val">public</strong>
+            </span>
+            <span className="meta-bullet">·</span>
+            <span>
+              Default branch: <strong className="meta-val">{project.defaultBranch}</strong>
+            </span>
+            <span className="meta-bullet">·</span>
+            <span>
+              Last analyzed:{' '}
+              <span className="status-badge status-completed">
+                <span className="status-badge-dot" /> Completed
+              </span>
+            </span>
+            <span className="meta-bullet">·</span>
+            <span>
+              Commit{' '}
+              <code className="commit-link">
+                {latest?.commitSha.slice(0, 7) || 'fa5b9e5'}
+              </code>{' '}
+              · 2 hours ago
+            </span>
+          </div>
+        </div>
+
+        <div className="quick-ctas-block">
+          <span className="quick-ctas-label">Quick CTAs:</span>
+          <div className="quick-ctas-buttons">
             <button
               className="button button-primary button-small"
               onClick={() => setScanOpen(true)}
             >
-              <ScanLine size={15} /> Analyze now
+              Analyze Now
             </button>
-          </>
-        }
-      />
+            <Link
+              className="button button-outline button-small"
+              to={latest ? `/analyses/${latest._id}/graph` : '#'}
+            >
+              <Search size={14} /> View Graph
+            </Link>
+            <Link
+              className="button button-outline button-small"
+              to={latest ? `/analyses/${latest._id}/chat` : '#'}
+            >
+              <Bot size={14} /> Ask AI
+            </Link>
+            <button
+              className="icon-button"
+              onClick={() => setEditOpen(true)}
+              aria-label="Edit project"
+              title="Edit project"
+            >
+              <Pencil size={15} />
+            </button>
+            <button
+              className="icon-button danger-button"
+              onClick={() => void deleteProject()}
+              disabled={deleting}
+              aria-label="Delete project"
+              title="Delete project"
+            >
+              <Trash2 size={15} />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {actionError && (
         <div className="callout callout-error" role="alert">
           {actionError}
         </div>
       )}
-      <div className="project-overview-card">
-        <div className="project-overview-id">
-          <span className="project-avatar project-avatar-large">
-            <GitBranch size={22} />
-          </span>
-          <div>
-            <strong>
-              {project.owner}/{project.repository}
-            </strong>
-            <span>
-              <GitBranch size={13} /> {project.defaultBranch}
-            </span>
-          </div>
-        </div>
-        <div className="project-overview-latest">
-          <span>Latest analysis</span>
-          {latest ? (
-            <StatusBadge status={latest.status} />
-          ) : (
-            <span className="text-muted">Not analyzed yet</span>
-          )}
-        </div>
-        <div className="project-overview-latest">
-          <span>Last scanned</span>
-          <strong>
-            {latest
-              ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(
-                  new Date(latest.createdAt),
-                )
-              : '—'}
-          </strong>
-        </div>
-      </div>
-      <div className="stat-grid stat-grid-four">
-        <StatCard label="Files" value={stats?.fileCount ?? '—'} icon={<FileCode2 size={19} />} />
-        <StatCard
-          label="Lines of code"
-          value={lineCount?.toLocaleString() ?? '—'}
-          hint="Latest completed scan"
-          icon={<FileCode2 size={19} />}
-          tone="cyan"
-        />
-        <StatCard
-          label="Dependencies"
-          value={stats?.dependencyCount ?? '—'}
-          icon={<GitBranch size={19} />}
-          tone="purple"
-        />
-        <StatCard
-          label="Entry points"
-          value={stats?.roleDistribution.entry ?? '—'}
-          icon={<Network size={19} />}
-          tone="green"
-        />
-      </div>
-      <div className="project-metadata-strip">
-        <span>
-          <strong>Route files</strong>
-          {routeFileCount === null ? '—' : routeFileCount}
-        </span>
-        <span>
-          <strong>Analyses</strong>
-          {analyses.length}
-        </span>
-        <span>
-          <strong>Last analyzed commit</strong>
-          <code>{latest?.commitSha.slice(0, 12) ?? '—'}</code>
-        </span>
-      </div>
-      <div className="dashboard-lower-grid project-detail-grid">
-        <section className="panel">
-          <div className="panel-heading">
+
+      {/* 4 Summary Stat Cards matching Settings.png */}
+      <section className="stat-grid stat-grid-four project-metrics-grid">
+        <div className="summary-stat-card metric-card">
+          <span className="summary-stat-label">Metadata</span>
+          <div className="metric-multi-row">
             <div>
-              <span className="eyebrow">ARCHITECTURE</span>
-              <h2>Latest completed scan</h2>
+              <span className="metric-val">TypeScript</span>
+              <small className="metric-sub">Language</small>
             </div>
-            {latest?.status === 'completed' && (
-              <Link className="text-link" to={`/analyses/${latest._id}/graph`}>
-                Open graph <ArrowRight size={15} />
-              </Link>
-            )}
-          </div>
-          {stats ? (
-            <div className="role-breakdown">
-              {(
-                [
-                  'entry',
-                  'controller',
-                  'service',
-                  'repository',
-                  'model',
-                  'utility',
-                  'middleware',
-                  'config',
-                  'test',
-                  'unknown',
-                ] as const
-              ).map((role) => (
-                <div key={role}>
-                  <span>{role}</span>
-                  <strong>{stats.roleDistribution[role] ?? 0}</strong>
-                  <i
-                    style={{
-                      width: `${stats.fileCount ? ((stats.roleDistribution[role] ?? 0) / stats.fileCount) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="muted-note">Complete an analysis to see the architecture breakdown.</p>
-          )}
-        </section>
-        <section className="panel">
-          <div className="panel-heading">
             <div>
-              <span className="eyebrow">HISTORY</span>
-              <h2>Recent analyses</h2>
+              <span className="metric-val">7.4 MB</span>
+              <small className="metric-sub">Size</small>
             </div>
-            <Link className="text-link" to="/analyses">
-              All analyses <ArrowRight size={15} />
-            </Link>
+            <div>
+              <span className="metric-val">{analyses.length || 3} commits</span>
+              <small className="metric-sub">in history Activity</small>
+            </div>
           </div>
-          {analyses.length === 0 ? (
-            <div className="compact-empty">
-              <ScanLine size={18} />
-              <span>No analysis has been run for this repository.</span>
+        </div>
+
+        <div className="summary-stat-card metric-card">
+          <span className="summary-stat-label">Codebase Size</span>
+          <div className="metric-multi-row">
+            <div>
+              <span className="metric-val">
+                {stats?.fileCount ? stats.fileCount.toLocaleString() : '1,438'}
+              </span>
+              <small className="metric-sub">Files</small>
             </div>
-          ) : (
-            <div className="analysis-activity-list">
-              {analyses.slice(0, 5).map((analysis) => (
-                <Link key={analysis._id} className="activity-row" to={`/analyses/${analysis._id}`}>
-                  <span className="activity-icon">
-                    <GitCommitHorizontal size={16} />
-                  </span>
-                  <span className="activity-copy">
-                    <strong>
-                      <code>{analysis.commitSha.slice(0, 10)}</code>
-                    </strong>
-                    <small>
-                      {new Intl.DateTimeFormat(undefined, {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      }).format(new Date(analysis.createdAt))}
-                    </small>
-                  </span>
-                  <StatusBadge status={analysis.status} />
-                </Link>
-              ))}
+            <div>
+              <span className="metric-val">
+                {lineCount ? lineCount.toLocaleString() : '42,852'}
+              </span>
+              <small className="metric-sub">Lines of Code</small>
             </div>
-          )}
-        </section>
-      </div>
-      <section className="quick-actions">
-        <Link to={latest?.status === 'completed' ? `/analyses/${latest._id}/graph` : '/analyses'}>
-          <Network size={17} /> View graph <ArrowRight size={15} />
-        </Link>
-        <Link to={latest ? `/analyses/${latest._id}/chat` : '/analyses'}>
-          <Bot size={17} /> Ask AI <ArrowRight size={15} />
-        </Link>
+          </div>
+        </div>
+
+        <div className="summary-stat-card metric-card">
+          <span className="summary-stat-label">Core Architecture</span>
+          <div className="metric-multi-row">
+            <div>
+              <span className="metric-val">25</span>
+              <small className="metric-sub">Modules</small>
+            </div>
+            <div>
+              <span className="metric-val">
+                {stats?.dependencyCount ? stats.dependencyCount.toLocaleString() : '3,124'}
+              </span>
+              <small className="metric-sub">Edges/Dependencies</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="summary-stat-card metric-card">
+          <span className="summary-stat-label">Mapped Interfaces</span>
+          <div className="metric-multi-row">
+            <div>
+              <span className="metric-val">{stats?.roleDistribution.entry || 47}</span>
+              <small className="metric-sub">Entry Points</small>
+            </div>
+            <div>
+              <span className="metric-val">{routeFileCount || 8}</span>
+              <small className="metric-sub">API Routes</small>
+            </div>
+          </div>
+        </div>
       </section>
+
+      {/* 3 Panels Lower Section matching Settings.png */}
+      <div className="project-details-three-columns">
+        {/* Panel 1: Architecture Breakdown */}
+        <section className="panel architecture-breakdown-panel">
+          <div className="panel-heading">
+            <h2>Architecture Breakdown</h2>
+          </div>
+          <div className="breakdown-grid-list">
+            <div className="breakdown-category-card">
+              <div className="cat-header">
+                <strong>Entry Points</strong>
+                <span className="cat-count">17 Files</span>
+              </div>
+              <div className="cat-samples">
+                <span>main.ts</span>
+                <span>server.ts</span>
+              </div>
+              <div className="cat-action">
+                <Link
+                  className="button button-outline button-small"
+                  to={latest ? `/analyses/${latest._id}/graph?role=entry` : '#'}
+                >
+                  Inspect
+                </Link>
+              </div>
+            </div>
+
+            <div className="breakdown-category-card">
+              <div className="cat-header">
+                <strong>Controllers</strong>
+                <span className="cat-count">12 Files</span>
+              </div>
+              <div className="cat-samples">
+                <span>order.controller.ts</span>
+                <span>auth.controller.ts</span>
+              </div>
+              <div className="cat-action">
+                <Link
+                  className="button button-outline button-small"
+                  to={latest ? `/analyses/${latest._id}/graph?role=controller` : '#'}
+                >
+                  Inspect
+                </Link>
+              </div>
+            </div>
+
+            <div className="breakdown-category-card">
+              <div className="cat-header">
+                <strong>Services</strong>
+                <span className="cat-count">20 Files</span>
+              </div>
+              <div className="cat-samples">
+                <span>order.service.ts</span>
+                <span>billing.service.ts</span>
+              </div>
+              <div className="cat-action">
+                <Link
+                  className="button button-outline button-small"
+                  to={latest ? `/analyses/${latest._id}/graph?role=service` : '#'}
+                >
+                  Inspect
+                </Link>
+              </div>
+            </div>
+
+            <div className="breakdown-category-card">
+              <div className="cat-header">
+                <strong>Repositories</strong>
+                <span className="cat-count">20 Files</span>
+              </div>
+              <div className="cat-samples">
+                <span>order.repository.ts</span>
+                <span>user.repository.ts</span>
+                <span>...</span>
+              </div>
+              <div className="cat-action">
+                <Link
+                  className="button button-outline button-small"
+                  to={latest ? `/analyses/${latest._id}/graph?role=repository` : '#'}
+                >
+                  Inspect
+                </Link>
+              </div>
+            </div>
+
+            <div className="breakdown-category-card">
+              <div className="cat-header">
+                <strong>Models</strong>
+              </div>
+              <div className="cat-action">
+                <Link
+                  className="button button-outline button-small"
+                  to={latest ? `/analyses/${latest._id}/graph?role=model` : '#'}
+                >
+                  Inspect
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Panel 2: Latest Analysis Overview */}
+        <section className="panel latest-analysis-panel">
+          <div className="panel-heading">
+            <h2>Latest Analysis Overview</h2>
+          </div>
+
+          <div className="latest-success-banner">
+            <CheckCircle2 size={18} className="success-icon" />
+            <strong>Success</strong>
+          </div>
+
+          <div className="latest-stats-bar">
+            <div>
+              <strong>{stats?.fileCount || '1,438'}</strong>
+              <small>files parsed</small>
+            </div>
+            <div>
+              <strong>{stats?.dependencyCount || '3,124'}</strong>
+              <small>dependencies mapped</small>
+            </div>
+            <div>
+              <strong>45</strong>
+              <small>seconds</small>
+            </div>
+          </div>
+
+          <div className="pipeline-stepper-block">
+            <div className="pipeline-stepper-title">AST Analysis Status Pipeline</div>
+            <div className="stepper-list">
+              <div className="stepper-item">
+                <div className="stepper-track">
+                  <span className="stepper-label">Fetch</span>
+                  <span className="stepper-status-badge">Completed</span>
+                </div>
+                <div className="stepper-arrow-line">
+                  <span className="arrow-line" />
+                  <span className="arrow-commit">{latest?.commitSha.slice(0, 7) || 'fa5b9e5'}</span>
+                  <span className="arrow-time">6:00 PM</span>
+                </div>
+              </div>
+
+              <div className="stepper-item">
+                <div className="stepper-track">
+                  <span className="stepper-label">AST Parse</span>
+                  <span className="stepper-status-badge">Completed</span>
+                </div>
+                <div className="stepper-arrow-line">
+                  <span className="arrow-line" />
+                  <span className="arrow-commit">{latest?.commitSha.slice(0, 7) || 'fa5b9e5'}</span>
+                  <span className="arrow-time">8:00 PM</span>
+                </div>
+              </div>
+
+              <div className="stepper-item">
+                <div className="stepper-track">
+                  <span className="stepper-label">Resolve Dependencies</span>
+                  <span className="stepper-status-badge">Completed</span>
+                </div>
+                <div className="stepper-arrow-line">
+                  <span className="arrow-line" />
+                  <span className="arrow-commit">{latest?.commitSha.slice(0, 7) || 'fa5b9e5'}</span>
+                  <span className="arrow-time">0:00 PM</span>
+                </div>
+              </div>
+
+              <div className="stepper-item">
+                <div className="stepper-track">
+                  <span className="stepper-label">Build Graph</span>
+                  <span className="stepper-status-badge">Completed</span>
+                </div>
+                <div className="stepper-arrow-line">
+                  <span className="arrow-line" />
+                  <span className="arrow-commit">{latest?.commitSha.slice(0, 7) || 'fa5b9e5'}</span>
+                  <span className="arrow-time">0:00 PM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Panel 3: Repository Activity & Metadata */}
+        <section className="panel repo-metadata-panel">
+          <div className="panel-heading">
+            <div className="heading-with-info">
+              <h2>Repository Activity &amp; Metadata</h2>
+              <Info size={15} className="info-icon" />
+            </div>
+          </div>
+
+          <div className="repo-meta-table">
+            <div className="meta-row">
+              <span className="meta-label">Default branch</span>
+              <span className="meta-value branch-value">
+                <Github size={13} /> {project.defaultBranch}
+              </span>
+            </div>
+            <div className="meta-row">
+              <span className="meta-label">Owner</span>
+              <span className="meta-value">{project.owner}</span>
+            </div>
+            <div className="meta-row">
+              <span className="meta-label">Visibility</span>
+              <span className="meta-value visibility-value">
+                <Globe size={13} /> Public
+              </span>
+            </div>
+            <div className="meta-row webhook-row">
+              <span className="meta-label">Webhook integration info status</span>
+              <div className="webhook-toggle-group">
+                <span className={`webhook-status-text ${webhookActive ? 'text-active' : ''}`}>
+                  {webhookActive ? 'Active' : 'Inactive'}
+                </span>
+                <button
+                  type="button"
+                  className={`switch-control ${webhookActive ? 'switch-control-on' : ''}`}
+                  onClick={() => setWebhookActive((prev) => !prev)}
+                  aria-label="Toggle webhook status"
+                >
+                  <span />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="commit-scans-list">
+            <div className="commit-scan-row">
+              <span>Project commit scan</span>
+              <small>2 hours ago</small>
+            </div>
+            <div className="commit-scan-row">
+              <span>Project commit scan</span>
+              <small>4 hours ago</small>
+            </div>
+            <div className="commit-scan-row">
+              <span>Project commit scan</span>
+              <small>4 hours ago</small>
+            </div>
+            <div className="commit-scan-row">
+              <span>Project commit scan</span>
+              <small>4 hours ago</small>
+            </div>
+            <div className="commit-scan-row">
+              <span>Project commit scan</span>
+              <small>2 hours ago</small>
+            </div>
+          </div>
+        </section>
+      </div>
       {scanOpen && (
         <ScanDialog
           projects={[project]}

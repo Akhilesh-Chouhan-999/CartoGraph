@@ -6,6 +6,9 @@ import CartoGraphAgent from '../langchain/agent.js';
 import AnalysisService from './analysis.service.js';
 import ProjectService from './project.service.js';
 
+/**
+ * Coordinates chat application logic.
+ */
 class ChatService {
   private readonly sessions = new ChatSessionRepository();
   private readonly messages = new ChatMessageRepository();
@@ -13,11 +16,20 @@ class ChatService {
   private readonly projects = new ProjectService();
   private readonly agent: CartoGraphAgent;
 
+  /**
+   * Initializes the chat service instance.
+   * @param analyses - The analyses value used by this operation.
+   */
   constructor(analyses: AnalysisService) {
     this.analyses = analyses;
     this.agent = new CartoGraphAgent(analyses);
   }
 
+  /**
+   * Creates a chat session for the selected project and analysis.
+   * @param userId - The user identifier.
+   * @param input - The input value to process.
+   */
   public async createSession(
     userId: string,
     input: { projectId: string; analysisId: string; title?: string },
@@ -33,6 +45,11 @@ class ChatService {
     });
   }
 
+  /**
+   * Retrieves a chat session after checking the requesting user owns its project.
+   * @param userId - The user identifier.
+   * @param sessionId - The chat session identifier.
+   */
   public async getSession(userId: string, sessionId: string) {
     const session = await this.sessions.findById(sessionId);
     if (session === null) throw new AppError('Chat session not found', 404);
@@ -40,17 +57,33 @@ class ChatService {
     return session;
   }
 
+  /**
+   * Retrieves the messages saved in a chat session.
+   * @param userId - The user identifier.
+   * @param sessionId - The chat session identifier.
+   */
   public async getMessages(userId: string, sessionId: string) {
     await this.getSession(userId, sessionId);
     return this.messages.findBySessionId(sessionId);
   }
 
+  /**
+   * Removes the requested chat data.
+   * @param userId - The user identifier.
+   * @param sessionId - The chat session identifier.
+   */
   public async deleteSession(userId: string, sessionId: string): Promise<void> {
     await this.getSession(userId, sessionId);
     await this.messages.deleteBySessionId(sessionId);
     await this.sessions.deleteById(sessionId);
   }
 
+  /**
+   * Produces a response to the supplied chat request.
+   * @param userId - The user identifier.
+   * @param analysisId - The analysis identifier.
+   * @param input - The input value to process.
+   */
   public async sendMessage(
     userId: string,
     analysisId: string,

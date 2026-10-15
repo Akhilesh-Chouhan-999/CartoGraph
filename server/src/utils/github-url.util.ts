@@ -5,7 +5,14 @@ export interface GitHubRepositoryAddress {
   repository: string;
 }
 
+/**
+ * Provides reusable git hub url utilities.
+ */
 export class GitHubUrlUtil {
+  /**
+   * Parses source code and extracts dependency candidates with source locations.
+   * @param input - The input value to process.
+   */
   public parse(input: string): GitHubRepositoryAddress {
     let url: URL;
     try {

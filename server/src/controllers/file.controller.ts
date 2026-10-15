@@ -11,13 +11,25 @@ import {
   idParamsSchema,
 } from '../schemas/index.js';
 
+/**
+ * Handles HTTP requests for file operations.
+ */
 class FileController {
   private readonly files: FileService;
 
+  /**
+   * Initializes the file controller instance.
+   * @param queue - The queue value used by this operation.
+   */
   constructor(queue: AnalysisQueue) {
     this.files = new FileService(new AnalysisService(queue));
   }
 
+  /**
+   * Lists file records available to the current user.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public list: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -25,6 +37,11 @@ class FileController {
     res.json({ success: true, data: await this.files.getAnalysisFiles(userId, id) });
   };
 
+  /**
+   * Retrieves the selected file record.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public get: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
@@ -32,6 +49,11 @@ class FileController {
     res.json({ success: true, data: await this.files.getFile(userId, id, fileId) });
   };
 
+  /**
+   * Retrieves file data for the supplied criteria.
+   * @param req - The incoming Express request.
+   * @param res - The outgoing Express response.
+   */
   public getById: RequestHandler = async (req, res) => {
     const userId = req.user?.userId;
     if (userId === undefined) throw new AppError('Authentication required', 401);
