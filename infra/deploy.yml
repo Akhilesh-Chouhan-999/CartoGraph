@@ -92,7 +92,7 @@ jobs:
             --parameters \
               serverImage=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
               jwtSecret="${{ secrets.JWT_SECRET }}" \
-              mongoUri="${{ secrets.MONGO_URI }}" \
+              mongoUri="${{ secrets.MONGODB_URI != '' && secrets.MONGODB_URI || secrets.MONGO_URI }}" \
               redisUrl="${{ secrets.REDIS_URL }}" \
               githubToken="${{ secrets.APP_GITHUB_TOKEN }}" \
               openaiApiKey="${{ secrets.OPENAI_API_KEY }}" \
