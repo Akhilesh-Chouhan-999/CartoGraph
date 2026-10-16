@@ -1,11 +1,7 @@
-import {
-  HelpCircle,
-  LineChart,
-  ScanSearch,
-  Sparkles,
-  Waypoints,
-} from 'lucide-react';
+import { HelpCircle, LineChart, ScanSearch, Sparkles, Waypoints } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+import { InteractiveHeroGraph } from '../../components/landing/interactive-hero-graph.js';
 
 const features = [
   {
@@ -75,51 +71,7 @@ export function HomePage() {
           </div>
         </div>
         <div className="hero-visual">
-          <div className="visual-canvas">
-            <div className="visual-grid" />
-            <div className="flow-vertical-stack">
-              <div className="flow-card flow-entrypoint">
-                <span className="flow-role">entrypoint</span>
-                <span className="flow-file">(main.ts)</span>
-              </div>
-              <div className="flow-arrow-down" />
-              <div className="flow-card flow-controller">
-                <span className="flow-role">controller</span>
-                <span className="flow-file">(order.controller.ts)</span>
-              </div>
-              <div className="flow-arrow-down" />
-              <div className="flow-card flow-service">
-                <span className="flow-role">service</span>
-                <span className="flow-file">(order.service.ts)</span>
-              </div>
-              <div className="flow-arrow-down" />
-              <div className="flow-card flow-repository">
-                <span className="flow-role">repository</span>
-                <span className="flow-file">(order.repository.ts)</span>
-              </div>
-              <div className="flow-arrow-down" />
-              <div className="flow-card flow-model">
-                <span className="flow-role">model</span>
-                <span className="flow-file">(order.model.ts)</span>
-              </div>
-            </div>
-            {/* Curved bypass connections matching design */}
-            <svg className="flow-curve-svg" viewBox="0 0 320 400" aria-hidden="true">
-              <path
-                d="M 50 45 C 10 45, 10 205, 50 205"
-                fill="none"
-                stroke="#94a3b8"
-                strokeWidth="1.5"
-                strokeDasharray="3 3"
-              />
-              <path
-                d="M 50 125 C 20 125, 20 285, 50 285"
-                fill="none"
-                stroke="#94a3b8"
-                strokeWidth="1.5"
-              />
-            </svg>
-          </div>
+          <InteractiveHeroGraph />
         </div>
       </section>
 

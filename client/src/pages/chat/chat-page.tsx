@@ -55,13 +55,13 @@ export function ChatPage() {
   const [creatingSession, setCreatingSession] = useState(false);
   const [deletingSession, setDeletingSession] = useState(false);
   const [error, setError] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let active = true;
     void (async () => {
       const current = await analysisService.get(analysisId);
-      const [owner, sourceFiles] = await Promise.all([
+      const [owner, sourceFiles]: [Project, FileRecord[]] = await Promise.all([
         projectService.get(current.projectId),
         fileService.list(analysisId),
       ]);

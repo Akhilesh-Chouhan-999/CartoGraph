@@ -30,7 +30,7 @@ export function AnalysisProgressPage() {
     async function refresh() {
       try {
         const current = await analysisService.get(analysisId);
-        const [nextStatus, owner] = await Promise.all([
+        const [nextStatus, owner]: [AnalysisStatusInfo, Project] = await Promise.all([
           analysisService.status(analysisId),
           projectService.get(current.projectId),
         ]);

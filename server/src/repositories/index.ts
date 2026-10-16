@@ -5,3 +5,4 @@ export { default as FileRepository } from './file.repository.js';
 export { default as DependencyRepository } from './dependency.repository.js';
 export { default as ChatSessionRepository } from './chat-session.repository.js';
 export { default as ChatMessageRepository } from './chat-message.repository.js';
+export { default as OAuthIdentityRepository } from './oauth-identity.repository.js';

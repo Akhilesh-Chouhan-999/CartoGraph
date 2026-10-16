@@ -11,7 +11,8 @@ class DependencyRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<Dependency>): Promise<HydratedDocument<Dependency>> {
-    return DependencyModel.create(data);
+    const dependency: HydratedDocument<Dependency> = await DependencyModel.create(data);
+    return dependency;
   }
   /**
    * Persists a batch of dependency records.

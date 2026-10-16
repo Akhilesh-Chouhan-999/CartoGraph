@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GitBranch, LoaderCircle, X } from 'lucide-react';
 
@@ -32,7 +32,7 @@ export function ScanDialog({
    * Validates and submits the current form values.
    * @param event - The event value used by this operation.
    */
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     setBusy(true);

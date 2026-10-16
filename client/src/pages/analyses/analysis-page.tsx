@@ -33,7 +33,7 @@ export function AnalysisPage() {
     let active = true;
     void (async () => {
       const current = await analysisService.get(analysisId);
-      const [owner, summary] = await Promise.all([
+      const [owner, summary]: [Project, ProjectStats | null] = await Promise.all([
         projectService.get(current.projectId),
         current.status === 'completed' ? analysisService.stats(analysisId) : Promise.resolve(null),
       ]);

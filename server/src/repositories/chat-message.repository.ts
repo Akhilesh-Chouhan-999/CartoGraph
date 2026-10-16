@@ -11,7 +11,8 @@ class ChatMessageRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<ChatMessage>): Promise<HydratedDocument<ChatMessage>> {
-    return ChatMessageModel.create(data);
+    const message: HydratedDocument<ChatMessage> = await ChatMessageModel.create(data);
+    return message;
   }
   /**
    * Persists a batch of chat message records.

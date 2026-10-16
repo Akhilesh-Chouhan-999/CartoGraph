@@ -1,4 +1,4 @@
-import path from 'node:path';
+import { posix } from 'node:path';
 
 import type { GitHubTreeEntry } from '../github/index.js';
 import type { SourceFileMetadata } from './analysis.types.js';
@@ -40,7 +40,7 @@ class FileScanner {
   ): SourceFileMetadata[] {
     const files = entries
       .filter((entry) => entry.type === 'blob')
-      .map((entry) => ({ entry, extension: path.posix.extname(entry.path).toLowerCase() }))
+      .map((entry) => ({ entry, extension: posix.extname(entry.path).toLowerCase() }))
       .filter(
         ({ entry, extension }) =>
           extensions[extension] !== undefined &&

@@ -16,6 +16,14 @@
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>CartoGraph — Codebase intelligence</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('cartograph.theme') || 'light';
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

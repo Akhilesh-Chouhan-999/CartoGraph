@@ -36,13 +36,20 @@ export function FileDetailsPage() {
       fileService.dependents(analysisId, fileId),
       fileService.list(analysisId),
     ])
-      .then(([record, outgoing, incoming, allFiles]) => {
-        if (!active) return;
-        setFile(record);
-        setDependencies(outgoing);
-        setDependents(incoming);
-        setLabels(new Map(allFiles.map((item) => [item._id, item.path])));
-      })
+      .then(
+        ([record, outgoing, incoming, allFiles]: [
+          FileRecord,
+          DependencyRecord[],
+          DependencyRecord[],
+          FileRecord[],
+        ]) => {
+          if (!active) return;
+          setFile(record);
+          setDependencies(outgoing);
+          setDependents(incoming);
+          setLabels(new Map(allFiles.map((item) => [item._id, item.path])));
+        },
+      )
       .catch((caught: unknown) => {
         if (active) setError(errorMessage(caught));
       })

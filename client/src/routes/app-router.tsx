@@ -8,6 +8,7 @@ import { ProtectedRoute, PublicRoute } from './protected-route.js';
 import { LoadingState } from '../components/common/async-states.js';
 import { HomePage } from '../pages/home/home-page.js';
 import { AuthPage } from '../pages/auth/auth-page.js';
+import { OAuthCallbackPage } from '../pages/auth/oauth-callback-page.js';
 import { DashboardPage } from '../pages/dashboard/dashboard-page.js';
 import { ProjectsPage } from '../pages/projects/projects-page.js';
 import { ProjectDetailsPage } from '../pages/projects/project-details-page.js';
@@ -21,11 +22,10 @@ import { BlastRadiusPage } from '../pages/graph/blast-radius-page.js';
 import { ChatPage } from '../pages/chat/chat-page.js';
 import { SettingsPage } from '../pages/settings/settings-page.js';
 
-const GraphPage = lazy(() =>
-  import('../pages/graph/graph-page.js').then((module) => ({ default: module.GraphPage })),
-);
+const GraphPage = lazy(() => import('../pages/graph/graph-page.js'));
 
 export const appRouter = createBrowserRouter([
+  { path: '/auth/callback', element: <OAuthCallbackPage /> },
   {
     element: <PublicRoute />,
     children: [

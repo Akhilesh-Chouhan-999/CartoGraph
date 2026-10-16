@@ -62,6 +62,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(result.user);
   }, []);
 
+  const completeOAuth = useCallback(
+    async (code: string, clientState: string, remember: boolean) => {
+      const result = await authService.exchangeOAuthCode(code, clientState);
+      storeToken(result.token, remember);
+      setUser(result.user);
+    },
+    [],
+  );
+
   const signOut = useCallback(async () => {
     try {
       if (getToken()) await authService.logout();
@@ -72,8 +81,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, ready, signIn, signUp, signOut }),
-    [user, ready, signIn, signUp, signOut],
+    () => ({ user, ready, signIn, signUp, completeOAuth, signOut }),
+    [user, ready, signIn, signUp, completeOAuth, signOut],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

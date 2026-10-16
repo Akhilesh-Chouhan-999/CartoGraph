@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import EnvConfig from './env.config.js';
 import Logger from '../logger/logger.js';
 
 /**
@@ -7,11 +8,13 @@ import Logger from '../logger/logger.js';
  */
 class DatabaseConfig {
   private readonly logger: Logger;
+  private readonly env: EnvConfig;
 
   /**
    * Initializes the database config instance.
    */
-  constructor() {
+  constructor(env = new EnvConfig()) {
+    this.env = env;
     this.logger = new Logger();
   }
 
@@ -19,14 +22,8 @@ class DatabaseConfig {
    * Opens the MongoDB connection used by the application.
    */
   public async connect(): Promise<void> {
-    const mongoUri = process.env.MONGO_URI;
-
-    if (!mongoUri) {
-      throw new Error('MONGO_URI is not defined');
-    }
-
     try {
-      await mongoose.connect(mongoUri);
+      await mongoose.connect(this.env.mongoUri);
 
       this.logger.info('MongoDB connected successfully');
     } catch (error) {

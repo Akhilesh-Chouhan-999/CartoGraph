@@ -1,11 +1,4 @@
-import {
-  Activity,
-  ArrowRight,
-  Boxes,
-  GitBranch,
-  Github,
-  RefreshCw,
-} from 'lucide-react';
+import { Activity, ArrowRight, Boxes, GitBranch, Github, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -81,7 +74,8 @@ export function DashboardPage() {
         </div>
         <div className="welcome-meta">
           <span className="last-scanned-chip">
-            Last Scanned: {recentAnalyses[0] ? formatDate(recentAnalyses[0].createdAt) : '2 hours ago'}
+            Last Scanned:{' '}
+            {recentAnalyses[0] ? formatDate(recentAnalyses[0].createdAt) : '2 hours ago'}
           </span>
           <button
             className="button button-outline button-small"
@@ -252,17 +246,21 @@ export function DashboardPage() {
               <div className="timeline-list">
                 {recentAnalyses.map((analysis, index) => (
                   <div className="timeline-item" key={analysis._id}>
-                    <div className="timeline-track">
-                      <span className="timeline-dot" />
-                      {index < recentAnalyses.length - 1 && <span className="timeline-line" />}
+                    <div className="timeline-track-cell">
+                      <div className="timeline-track">
+                        <span className="timeline-dot" />
+                        {index < recentAnalyses.length - 1 && <span className="timeline-line" />}
+                      </div>
+                      <span className="timeline-scan-num">#{recentAnalyses.length - index}</span>
                     </div>
                     <code className="commit-sha-chip">{analysis.commitSha.slice(0, 7)}</code>
-                    <span className="timeline-message" title="feat: repository scan">
-                      feat: custom analysis
+                    <span
+                      className="timeline-message"
+                      title={`AST architecture analysis for commit ${analysis.commitSha}`}
+                    >
+                      AST dependency scan
                     </span>
-                    <span className="timeline-time">
-                      {formatDate(analysis.createdAt)}
-                    </span>
+                    <span className="timeline-time">{formatDate(analysis.createdAt)}</span>
                     <span className="timeline-status">
                       <StatusBadge status={analysis.status} />
                     </span>

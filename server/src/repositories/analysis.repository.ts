@@ -10,7 +10,8 @@ class AnalysisRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<Analysis>): Promise<HydratedDocument<Analysis>> {
-    return AnalysisModel.create(data);
+    const analysis: HydratedDocument<Analysis> = await AnalysisModel.create(data);
+    return analysis;
   }
 
   /**

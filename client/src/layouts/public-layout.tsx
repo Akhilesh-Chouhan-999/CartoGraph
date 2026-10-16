@@ -1,14 +1,17 @@
-import { ArrowRight, Github, Menu, X } from 'lucide-react';
+import { ArrowRight, Github, Menu, Moon, Sun, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 import { BrandMark } from '../components/common/brand-mark.js';
+import { useTheme } from '../context/use-theme.js';
 
 /**
  * Renders the public layout interface.
  */
 export function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <div className="public-shell">
       <header className="public-nav">
@@ -43,9 +46,19 @@ export function PublicLayout() {
             <Github size={16} /> GitHub
           </a>
         </nav>
-        <Link className="button button-primary public-cta" to="/register">
-          Analyze a repository <ArrowRight size={16} />
-        </Link>
+        <div className="public-nav-actions">
+          <button
+            className="icon-button theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+          >
+            {theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}
+          </button>
+          <Link className="button button-primary public-cta" to="/register">
+            Analyze a repository <ArrowRight size={16} />
+          </Link>
+        </div>
       </header>
       <Outlet />
       <footer className="public-footer">

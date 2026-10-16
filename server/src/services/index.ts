@@ -8,3 +8,7 @@ export { default as GraphService } from './graph.service.js';
 export { default as BlastRadiusService } from './blast-radius.service.js';
 export { default as PathService } from './path.service.js';
 export { default as ChatService } from './chat.service.js';
+export { default as OAuthService } from './oauth.service.js';
+export { default as OAuthAccountService } from './oauth-account.service.js';
+export { default as OpenAiService } from './openai.service.js';
+export { default as LangSmithService } from './langsmith.service.js';

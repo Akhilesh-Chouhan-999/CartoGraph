@@ -10,7 +10,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { ErrorState, LoadingState } from '../../components/common/async-states.js';
@@ -141,10 +141,8 @@ export function ProjectDetailsPage() {
             <span className="meta-bullet">·</span>
             <span>
               Commit{' '}
-              <code className="commit-link">
-                {latest?.commitSha.slice(0, 7) || 'fa5b9e5'}
-              </code>{' '}
-              · 2 hours ago
+              <code className="commit-link">{latest?.commitSha.slice(0, 7) || 'fa5b9e5'}</code> · 2
+              hours ago
             </span>
           </div>
         </div>
@@ -565,7 +563,7 @@ function EditProjectDialog({
    * Validates and submits the current form values.
    * @param event - The event value used by this operation.
    */
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setError('');

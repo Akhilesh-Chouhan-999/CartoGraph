@@ -1,6 +1,7 @@
 import { RouterProvider } from 'react-router-dom';
 
 import { AuthProvider } from './context/auth-provider.js';
+import { ThemeProvider } from './context/theme-provider.js';
 import { appRouter } from './routes/app-router.js';
 
 /**
@@ -8,8 +9,10 @@ import { appRouter } from './routes/app-router.js';
  */
 export function App() {
   return (
-    <AuthProvider>
-      <RouterProvider router={appRouter} />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <RouterProvider router={appRouter} />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

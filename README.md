@@ -182,10 +182,15 @@ The client is served at `http://localhost:5173`. The API listens at `http://loca
 | `PORT`              | No       | `5000`                                 | HTTP API port.                                        |
 | `MONGO_URI`         | Yes      | `mongodb://127.0.0.1:27017/cartograph` | MongoDB connection string.                            |
 | `REDIS_URL`         | No       | `redis://127.0.0.1:6379`               | Redis connection used by BullMQ and rate limiting.    |
-| `CLIENT_URL`        | No       | `http://localhost:5173`                | Allowed browser origin for CORS.                      |
+| `CLIENT_URL`        | No       | `http://localhost:5173`                | Allowed browser origin and OAuth client redirect target. |
+| `API_BASE_URL`      | No       | `http://localhost:5000`                | Public backend origin used to build OAuth callback URLs. |
 | `JWT_SECRET`        | Yes      | Set locally; 32+ characters            | Secret used to sign and verify JWTs.                  |
 | `JWT_EXPIRES_IN`    | No       | `7d`                                   | JWT expiration value.                                 |
 | `GITHUB_TOKEN`      | No       | Empty                                  | Optional token for GitHub API access.                 |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | No | Empty | Google OAuth web client credentials. |
+| `GITHUB_OAUTH_CLIENT_ID` / `GITHUB_OAUTH_CLIENT_SECRET` | No | Empty | GitHub OAuth app credentials; separate from `GITHUB_TOKEN`. |
+| `GITLAB_CLIENT_ID` / `GITLAB_CLIENT_SECRET` | No | Empty | GitLab OAuth application credentials. |
+| `GITLAB_BASE_URL`   | No       | `https://gitlab.com`                   | GitLab instance used for sign-in.                     |
 | `OPENAI_API_KEY`    | No       | Empty                                  | Enables AI chat when configured.                      |
 | `OPENAI_MODEL`      | No       | `gpt-4o-mini`                          | OpenAI model used by the chat agent.                  |
 | `LANGSMITH_API_KEY` | No       | Empty                                  | Optional LangSmith tracing credential.                |
@@ -251,7 +256,7 @@ The React application defines these browser routes:
 | `/analyses/:analysisId/chat`                       | Repository chat               |
 | `/settings`                                        | Account and UI settings       |
 
-OAuth provider buttons are not connected to OAuth endpoints. Sign-in and registration use the backend email/password API.
+Email/password authentication and Google, GitHub, and GitLab sign-in share the CartoGraph JWT session. OAuth-only accounts require a provider-verified email. Existing email accounts must be signed in and explicitly linked from Settings. OAuth providers are disabled until their client credentials are configured. Register `<API_BASE_URL>/api/auth/oauth/<provider>/callback` as each provider's callback URL; `API_BASE_URL` is the full backend origin, for example `http://localhost:5000` locally. The backend keeps OAuth credentials private and returns a short-lived one-time code to the client callback before issuing the JWT.
 
 ## API reference
 
@@ -271,6 +276,12 @@ Business API routes are prefixed with `/api`; the health endpoint is `/health`. 
 | `POST` | `/api/auth/login`    | Sign in (`email`, `password`).                   |
 | `POST` | `/api/auth/logout`   | Revoke the current session token.                |
 | `GET`  | `/api/auth/me`       | Return the current safe user profile.            |
+| `GET`  | `/api/auth/oauth/providers` | Return which OAuth providers are configured. |
+| `GET`  | `/api/auth/oauth/:provider/start` | Start provider sign-in (`google`, `github`, or `gitlab`). |
+| `GET`  | `/api/auth/oauth/:provider/callback` | Provider callback; configure this URL with the identity provider. |
+| `POST` | `/api/auth/oauth/exchange` | Exchange the one-time OAuth result code for the CartoGraph JWT session. |
+| `GET`  | `/api/auth/oauth/accounts` | List linked providers for the current user. |
+| `POST` | `/api/auth/oauth/:provider/link` | Begin linking a provider to the current user. |
 
 ### Projects and analyses
 

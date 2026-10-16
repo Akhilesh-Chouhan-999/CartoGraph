@@ -6,6 +6,7 @@ import GraphService from '../services/graph.service.js';
 import PathService from '../services/path.service.js';
 import BlastRadiusService from '../services/blast-radius.service.js';
 import DependencyService from '../services/dependency.service.js';
+import type AnalysisService from '../services/analysis.service.js';
 
 /**
  * Creates verified graph tools for the AI agent.
@@ -21,7 +22,7 @@ export class GraphTools {
    * Initializes the graph tools instance.
    * @param analysisService - The analysis service value used by this operation.
    */
-  constructor(analysisService: import('../services/analysis.service.js').default) {
+  constructor(analysisService: AnalysisService) {
     this.files = new FileService(analysisService);
     this.dependencies = new DependencyService(analysisService);
     this.graph = new GraphService(analysisService);

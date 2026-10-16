@@ -47,6 +47,34 @@ param openaiModel string = 'gpt-4o-mini'
 ])
 param logLevel string = 'info'
 
+@description('Optional Google OAuth Client ID')
+param googleClientId string = ''
+
+@description('Optional Google OAuth Client Secret')
+@secure()
+param googleClientSecret string = ''
+
+@description('Optional GitHub OAuth Client ID')
+param githubOAuthClientId string = ''
+
+@description('Optional GitHub OAuth Client Secret')
+@secure()
+param githubOAuthClientSecret string = ''
+
+@description('Optional GitLab OAuth Client ID')
+param gitlabClientId string = ''
+
+@description('Optional GitLab OAuth Client Secret')
+@secure()
+param gitlabClientSecret string = ''
+
+@description('Optional GitHub Container Registry username')
+param ghcrUsername string = ''
+
+@description('Optional GitHub Container Registry token')
+@secure()
+param ghcrToken string = ''
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var logAnalyticsName = '${appName}-${environmentName}-logs-${uniqueSuffix}'
 var containerAppEnvName = '${appName}-${environmentName}-cae-${uniqueSuffix}'
@@ -120,7 +148,30 @@ resource serverApp 'Microsoft.App/containerApps@2024-03-01' = {
           name: 'openai-api-key'
           value: empty(openaiApiKey) ? 'disabled' : openaiApiKey
         }
+        {
+          name: 'google-client-secret'
+          value: empty(googleClientSecret) ? 'disabled' : googleClientSecret
+        }
+        {
+          name: 'github-oauth-client-secret'
+          value: empty(githubOAuthClientSecret) ? 'disabled' : githubOAuthClientSecret
+        }
+        {
+          name: 'gitlab-client-secret'
+          value: empty(gitlabClientSecret) ? 'disabled' : gitlabClientSecret
+        }
+        {
+          name: 'ghcr-token'
+          value: empty(ghcrToken) ? 'disabled' : ghcrToken
+        }
       ]
+      registries: !empty(ghcrToken) && !empty(ghcrUsername) ? [
+        {
+          server: 'ghcr.io'
+          username: ghcrUsername
+          passwordSecretRef: 'ghcr-token'
+        }
+      ] : []
     }
     template: {
       containers: [
@@ -139,6 +190,10 @@ resource serverApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'PORT'
               value: '5000'
+            }
+            {
+              name: 'API_BASE_URL'
+              value: 'https://${serverAppName}.${containerAppEnv.properties.defaultDomain}'
             }
             {
               name: 'CLIENT_URL'
@@ -175,6 +230,30 @@ resource serverApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'OPENAI_API_KEY'
               secretRef: 'openai-api-key'
+            }
+            {
+              name: 'GOOGLE_CLIENT_ID'
+              value: googleClientId
+            }
+            {
+              name: 'GOOGLE_CLIENT_SECRET'
+              secretRef: 'google-client-secret'
+            }
+            {
+              name: 'GITHUB_OAUTH_CLIENT_ID'
+              value: githubOAuthClientId
+            }
+            {
+              name: 'GITHUB_OAUTH_CLIENT_SECRET'
+              secretRef: 'github-oauth-client-secret'
+            }
+            {
+              name: 'GITLAB_CLIENT_ID'
+              value: gitlabClientId
+            }
+            {
+              name: 'GITLAB_CLIENT_SECRET'
+              secretRef: 'gitlab-client-secret'
             }
           ]
           probes: [

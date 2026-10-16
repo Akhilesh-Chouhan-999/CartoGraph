@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "client:dev": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "client:check": "npm --prefix client run check",
+    "client:test": "npm --prefix client run test",
     "server:dev": "npm --prefix server run dev",
     "server:build": "npm --prefix server run build",
     "server:check": "npm --prefix server run check",
@@ -12,8 +16,8 @@
     "docker:up": "docker compose -f docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f docker/docker-compose.yml down",
     "docker:logs": "docker compose -f docker/docker-compose.yml logs -f",
-    "check": "npm run server:check",
-    "test": "npm run server:test"
+    "check": "npm run client:check && npm run server:check",
+    "test": "npm run client:test && npm run server:test"
   },
   "keywords": [],
   "author": "",

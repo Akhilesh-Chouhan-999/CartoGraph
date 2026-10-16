@@ -10,7 +10,8 @@ class ProjectRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<Project>): Promise<HydratedDocument<Project>> {
-    return ProjectModel.create(data);
+    const project: HydratedDocument<Project> = await ProjectModel.create(data);
+    return project;
   }
 
   /**

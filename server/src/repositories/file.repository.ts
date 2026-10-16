@@ -11,7 +11,8 @@ class FileRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<FileDocument>): Promise<HydratedDocument<FileDocument>> {
-    return FileModel.create(data);
+    const file: HydratedDocument<FileDocument> = await FileModel.create(data);
+    return file;
   }
   /**
    * Persists a batch of file records.

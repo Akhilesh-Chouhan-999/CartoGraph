@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import { ReactFlowProvider } from '@xyflow/react';
 
 import { App } from './app.js';
@@ -7,10 +7,10 @@ import './styles/tokens.css';
 import './styles/globals.css';
 import '@xyflow/react/dist/style.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
     <ReactFlowProvider>
       <App />
     </ReactFlowProvider>
-  </React.StrictMode>,
+  </StrictMode>,
 );

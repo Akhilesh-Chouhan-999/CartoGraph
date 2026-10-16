@@ -1,9 +1,10 @@
-import { ChevronDown, Github, GitBranch, Menu, ScanLine } from 'lucide-react';
+import { ChevronDown, Github, GitBranch, Menu, Moon, ScanLine, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { PROJECTS_CHANGED_EVENT, projectService } from '../../services/projects/project.service.js';
 import { analysisService } from '../../services/analyses/analysis.service.js';
+import { useTheme } from '../../context/use-theme.js';
 import type { Project } from '../../types/domain.js';
 import { ScanDialog } from './scan-dialog.js';
 
@@ -57,6 +58,7 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
     };
   }, [analysisId]);
 
+  const { theme, toggleTheme } = useTheme();
   const current = projects.find((project) => project._id === selected);
 
   return (
@@ -93,6 +95,14 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
           </span>
         </div>
         <div className="top-actions">
+          <button
+            className="icon-button theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+          >
+            {theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}
+          </button>
           <button className="button button-primary button-small" onClick={() => setScanOpen(true)}>
             <ScanLine size={16} /> Scan Repo
           </button>

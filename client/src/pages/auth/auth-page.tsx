@@ -1,8 +1,17 @@
-import { Github, LoaderCircle } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { GitBranch, Github, LoaderCircle } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/use-auth.js';
+import {
+  authService,
+  createOAuthClientState,
+  OAUTH_CLIENT_STATE_KEY,
+  OAUTH_REMEMBER_KEY,
+  OAUTH_RETURN_TO_KEY,
+  type OAuthProvider,
+  type OAuthProviderStatus,
+} from '../../services/auth/auth.service.js';
 
 /**
  * Renders the auth page interface.
@@ -19,7 +28,35 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [oauthBusy, setOauthBusy] = useState<OAuthProvider | null>(null);
+  const [providers, setProviders] = useState<OAuthProviderStatus>({
+    google: false,
+    github: false,
+    gitlab: false,
+  });
   const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+
+  useEffect(() => {
+    let active = true;
+    void authService
+      .oauthProviders()
+      .then((result) => {
+        if (active) setProviders(result);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  function startOAuth(provider: OAuthProvider) {
+    setOauthBusy(provider);
+    const clientState = createOAuthClientState();
+    window.sessionStorage.setItem(OAUTH_CLIENT_STATE_KEY, clientState);
+    window.sessionStorage.setItem(OAUTH_REMEMBER_KEY, String(remember));
+    window.sessionStorage.setItem(OAUTH_RETURN_TO_KEY, from);
+    window.location.assign(authService.oauthStartUrl(provider, clientState));
+  }
 
   /**
    * Validates and submits the current form values.
@@ -65,16 +102,19 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
           <button
             type="button"
             className="oauth-button oauth-github"
-            disabled
-            title="GitHub OAuth is not configured on this backend"
+            disabled={!providers.github || oauthBusy !== null}
+            onClick={() => startOAuth('github')}
+            title={providers.github ? 'Continue with GitHub' : 'GitHub sign-in is not configured'}
           >
-            <Github size={18} /> Continue with GitHub
+            <Github size={18} />
+            {oauthBusy === 'github' ? 'Connecting…' : 'Continue with GitHub'}
           </button>
           <button
             type="button"
             className="oauth-button oauth-google"
-            disabled
-            title="Google OAuth is not configured on this backend"
+            disabled={!providers.google || oauthBusy !== null}
+            onClick={() => startOAuth('google')}
+            title={providers.google ? 'Continue with Google' : 'Google sign-in is not configured'}
           >
             <svg
               className="google-icon"
@@ -100,7 +140,17 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                 fill="#EA4335"
               />
             </svg>
-            Continue with Google
+            {oauthBusy === 'google' ? 'Connecting…' : 'Continue with Google'}
+          </button>
+          <button
+            type="button"
+            className="oauth-button oauth-gitlab"
+            disabled={!providers.gitlab || oauthBusy !== null}
+            onClick={() => startOAuth('gitlab')}
+            title={providers.gitlab ? 'Continue with GitLab' : 'GitLab sign-in is not configured'}
+          >
+            <GitBranch size={18} />
+            {oauthBusy === 'gitlab' ? 'Connecting…' : 'Continue with GitLab'}
           </button>
         </div>
 

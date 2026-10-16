@@ -10,7 +10,8 @@ class UserRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<User>): Promise<HydratedDocument<User>> {
-    return UserModel.create(data);
+    const user: HydratedDocument<User> = await UserModel.create(data);
+    return user;
   }
 
   /**
@@ -34,7 +35,7 @@ class UserRepository {
    * @param email - The user email address.
    */
   public async existsByEmail(email: string): Promise<boolean> {
-    const user = await UserModel.exists({ email });
+    const user = await UserModel.exists({ email }).exec();
     return user !== null;
   }
 

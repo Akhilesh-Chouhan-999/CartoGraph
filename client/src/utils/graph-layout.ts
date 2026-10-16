@@ -175,7 +175,7 @@ export function toFlowGraph(data: GraphData): { nodes: Node<GraphNodeData>[]; ed
     }
   }
 
-  const nodes = orderedLayers.flatMap(([depth, layer]) =>
+  const nodes: Node<GraphNodeData>[] = orderedLayers.flatMap(([depth, layer]) =>
     layer.map((file, row) => ({
       id: file.id,
       type: 'default',
@@ -200,7 +200,7 @@ export function toFlowGraph(data: GraphData): { nodes: Node<GraphNodeData>[]; ed
       },
     })),
   );
-  const edges = data.edges.map((edge) => ({
+  const edges: Edge[] = data.edges.map((edge) => ({
     id: edge.id,
     source: edge.source,
     target: edge.target,

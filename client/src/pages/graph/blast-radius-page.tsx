@@ -24,7 +24,7 @@ export function BlastRadiusPage() {
       fileService.get(analysisId, fileId),
       graphService.blastRadius(analysisId, fileId),
     ])
-      .then(([record, result]) => {
+      .then(([record, result]: [FileRecord, BlastRadius]) => {
         if (active) {
           setFile(record);
           setImpact(result);

@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import jwt, { type JwtPayload, type SignOptions } from 'jsonwebtoken';
-import type { Types } from 'mongoose';
 import { randomUUID } from 'node:crypto';
 import type { Redis } from 'ioredis';
 
@@ -46,7 +45,7 @@ class AuthService {
       throw new AppError('Email is already registered', 409);
     const passwordHash = await bcrypt.hash(input.password, 12);
     const user = await this.users.create({ name: input.name.trim(), email, passwordHash });
-    return { user: this.safe(user._id, user.name, user.email), token: this.token(user._id) };
+    return { user: this.safe(user.id, user.name, user.email), token: this.token(user.id) };
   }
 
   /**
@@ -55,10 +54,14 @@ class AuthService {
    */
   public async login(input: { email: string; password: string }): Promise<AuthResult> {
     const user = await this.users.findByEmail(input.email.trim().toLowerCase());
-    if (user === null || !(await bcrypt.compare(input.password, user.passwordHash))) {
+    if (
+      user === null ||
+      typeof user.passwordHash !== 'string' ||
+      !(await bcrypt.compare(input.password, user.passwordHash))
+    ) {
       throw new AppError('Invalid email or password', 401);
     }
-    return { user: this.safe(user._id, user.name, user.email), token: this.token(user._id) };
+    return { user: this.safe(user.id, user.name, user.email), token: this.token(user.id) };
   }
 
   /**
@@ -68,7 +71,17 @@ class AuthService {
   public async getMe(userId: string): Promise<SafeUser> {
     const user = await this.users.findById(userId);
     if (user === null) throw new AppError('User not found', 404);
-    return this.safe(user._id, user.name, user.email);
+    return this.safe(user.id, user.name, user.email);
+  }
+
+  /**
+   * Creates the established JWT response for an OAuth-authenticated account.
+   * @param userId - The identifier of the authenticated user.
+   */
+  public async createOAuthResult(userId: string): Promise<AuthResult> {
+    const user = await this.users.findById(userId);
+    if (user === null) throw new AppError('User not found', 404);
+    return { user: this.safe(user.id, user.name, user.email), token: this.token(user.id) };
   }
 
   /**
@@ -99,16 +112,16 @@ class AuthService {
    * @param name - The name value used by this operation.
    * @param email - The user email address.
    */
-  private safe(id: Types.ObjectId, name: string, email: string): SafeUser {
-    return { id: id.toString(), name, email };
+  private safe(id: string, name: string, email: string): SafeUser {
+    return { id, name, email };
   }
 
   /**
    * Creates a signed authentication token for the user.
    * @param userId - The user identifier.
    */
-  private token(userId: Types.ObjectId): string {
-    return jwt.sign({ userId: userId.toString() }, this.env.jwtSecret, {
+  private token(userId: string): string {
+    return jwt.sign({ userId }, this.env.jwtSecret, {
       jwtid: randomUUID(),
       expiresIn: this.env.jwtExpiresIn as NonNullable<SignOptions['expiresIn']>,
     });

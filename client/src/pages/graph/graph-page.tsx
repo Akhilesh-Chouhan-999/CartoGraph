@@ -80,6 +80,8 @@ export function GraphPage() {
   );
 }
 
+export { GraphPage as default };
+
 function GraphPageContent() {
   const { analysisId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -155,33 +157,32 @@ function GraphPageContent() {
       });
     const visibleIds = new Set(filteredNodes.map((node) => node.id));
     setNodes(filteredNodes);
-    setEdges(
-      converted.edges
-        .filter((edge) => visibleIds.has(edge.source) && visibleIds.has(edge.target))
-        .map((edge) => {
-          const isPathEdge = pathEdges.has(`${edge.source}:${edge.target}`);
-          const touchesSelection = edge.source === selectedId || edge.target === selectedId;
-          return isPathEdge
+    const visibleEdges: Edge[] = converted.edges
+      .filter((edge) => visibleIds.has(edge.source) && visibleIds.has(edge.target))
+      .map<Edge>((edge) => {
+        const isPathEdge = pathEdges.has(`${edge.source}:${edge.target}`);
+        const touchesSelection = edge.source === selectedId || edge.target === selectedId;
+        return isPathEdge
+          ? {
+              ...edge,
+              animated: true,
+              markerEnd: { type: 'arrowclosed', color: 'var(--primary)' },
+              style: { ...edge.style, stroke: 'var(--primary)', strokeWidth: 3 },
+            }
+          : touchesSelection
             ? {
                 ...edge,
-                animated: true,
                 markerEnd: { type: 'arrowclosed', color: 'var(--primary)' },
-                style: { ...edge.style, stroke: 'var(--primary)', strokeWidth: 3 },
+                style: {
+                  ...edge.style,
+                  stroke: 'var(--primary)',
+                  strokeWidth: 2.4,
+                  filter: 'drop-shadow(0 0 3px rgb(52 120 229 / 40%))',
+                },
               }
-            : touchesSelection
-              ? {
-                  ...edge,
-                  markerEnd: { type: 'arrowclosed', color: 'var(--primary)' },
-                  style: {
-                    ...edge.style,
-                    stroke: 'var(--primary)',
-                    strokeWidth: 2.4,
-                    filter: 'drop-shadow(0 0 3px rgb(52 120 229 / 40%))',
-                  },
-                }
-              : edge;
-        }),
-    );
+            : edge;
+      });
+    setEdges(visibleEdges);
   }, [converted, query, roleFilter, searchParams, selectedId, setEdges, setNodes]);
 
   useEffect(() => {
@@ -581,4 +582,3 @@ function FloatingCanvasControls({
     </>
   );
 }
-

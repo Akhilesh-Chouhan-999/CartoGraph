@@ -10,7 +10,8 @@ class ChatSessionRepository {
    * @param data - The data to persist or process.
    */
   public async create(data: Partial<ChatSession>): Promise<HydratedDocument<ChatSession>> {
-    return ChatSessionModel.create(data);
+    const session: HydratedDocument<ChatSession> = await ChatSessionModel.create(data);
+    return session;
   }
 
   /**

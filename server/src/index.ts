@@ -28,7 +28,7 @@ class Server {
   constructor() {
     this.env = new EnvConfig();
     this.config = new AppConfig();
-    this.database = new DatabaseConfig();
+    this.database = new DatabaseConfig(this.env);
     this.redis = new RedisConfig(this.env);
     this.logger = new Logger();
     this.registerShutdownHandlers();

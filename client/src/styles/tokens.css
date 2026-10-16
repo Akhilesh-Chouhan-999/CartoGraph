@@ -83,3 +83,65 @@
   --panel-radius: 10px;
   --control-radius: 7px;
 }
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* CartoGraph dark palette */
+  --page-background: #090d16;
+  --surface: #111827;
+  --surface-secondary: #1e293b;
+  --surface-hover: #1f293d;
+  --border: #334155;
+  --border-subtle: #1e293b;
+
+  /* Brand and Accent */
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-light: rgba(59, 130, 246, 0.18);
+  --cyan: #06b6d4;
+  --cyan-light: rgba(6, 182, 212, 0.18);
+
+  /* Semantic status colors */
+  --success: #22c55e;
+  --success-surface: rgba(34, 197, 94, 0.15);
+  --warning: #f59e0b;
+  --warning-surface: rgba(245, 158, 11, 0.15);
+  --error: #ef4444;
+  --error-surface: rgba(239, 68, 68, 0.15);
+
+  /* Text hierarchy (WCAG AA compliant contrast) */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  /* Graph role palette */
+  --graph-entry: #60a5fa;
+  --graph-controller: #22d3ee;
+  --graph-service: #c084fc;
+  --graph-repository: #fb923c;
+  --graph-model: #4ade80;
+  --graph-other: #94a3b8;
+  --graph-entry-surface: rgba(96, 165, 250, 0.18);
+  --graph-controller-surface: rgba(34, 211, 238, 0.18);
+  --graph-service-surface: rgba(192, 132, 252, 0.18);
+  --graph-repository-surface: rgba(251, 146, 60, 0.18);
+  --graph-model-surface: rgba(74, 222, 128, 0.18);
+  --graph-other-surface: rgba(148, 163, 184, 0.15);
+  --graph-dot: #334155;
+
+  /* Compatibility aliases */
+  --ink: var(--text-primary);
+  --muted: var(--text-muted);
+  --line: var(--border-subtle);
+  --canvas: var(--page-background);
+  --blue: var(--primary);
+  --blue-dark: var(--primary-hover);
+  --blue-pale: var(--primary-light);
+
+  /* Dark mode shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.7), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}

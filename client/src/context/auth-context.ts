@@ -7,6 +7,7 @@ export interface AuthContextValue {
   ready: boolean;
   signIn: (email: string, password: string, remember: boolean) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
+  completeOAuth: (code: string, clientState: string, remember: boolean) => Promise<void>;
   signOut: () => Promise<void>;
 }
 

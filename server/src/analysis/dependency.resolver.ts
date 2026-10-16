@@ -1,4 +1,4 @@
-import path from 'node:path';
+import { posix } from 'node:path';
 
 import type { DependencyCandidate, ResolvedDependency } from './analysis.types.js';
 
@@ -32,10 +32,10 @@ class DependencyResolver {
     const resolved: ResolvedDependency[] = [];
     for (const candidate of candidates) {
       if (!candidate.targetSpecifier.startsWith('.')) continue;
-      const base = path.posix.normalize(
-        path.posix.join(path.posix.dirname(candidate.sourcePath), candidate.targetSpecifier),
+      const base = posix.normalize(
+        posix.join(posix.dirname(candidate.sourcePath), candidate.targetSpecifier),
       );
-      const extension = path.posix.extname(base).toLowerCase();
+      const extension = posix.extname(base).toLowerCase();
       const sourceEquivalent = ['.js', '.jsx', '.mjs', '.cjs'].includes(extension)
         ? base.slice(0, -extension.length)
         : base;

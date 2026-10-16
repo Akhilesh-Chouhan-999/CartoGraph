@@ -1,4 +1,4 @@
-import path from 'node:path';
+import { posix } from 'node:path';
 
 /**
  * Provides reusable path utilities.
@@ -9,7 +9,7 @@ export class PathUtil {
    * @param value - The value value used by this operation.
    */
   public normalize(value: string): string {
-    return path.posix.normalize(value.replaceAll('\\', '/')).replace(/^\.\//, '');
+    return posix.normalize(value.replaceAll('\\', '/')).replace(/^\.\//, '');
   }
 }
 
