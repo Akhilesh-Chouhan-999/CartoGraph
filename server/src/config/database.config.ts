@@ -23,7 +23,7 @@ class DatabaseConfig {
    */
   public async connect(): Promise<void> {
     try {
-      await mongoose.connect(this.env.mongoUri);
+      await mongoose.connect(this.env.mongoUri, { family: 4 });
 
       this.logger.info('MongoDB connected successfully');
     } catch (error) {
