@@ -45,7 +45,6 @@ class Server {
    * Starts server processing and its required resources.
    */
   private async start(): Promise<void> {
-    await this.database.connect();
     await this.redis.getClient().ping();
     this.logger.info('Redis connected successfully');
     this.queue = new AnalysisQueue(this.redis.getClient());
@@ -56,6 +55,21 @@ class Server {
         `CartoGraph API running on port ${this.config.port} in ${this.config.nodeEnv} mode`,
       );
     });
+
+    try {
+      await this.database.connect();
+    } catch (error) {
+      this.logger.error('MongoDB initial connection failed - retrying in background every 10s:', error);
+      const retryInterval = setInterval(async () => {
+        try {
+          await this.database.connect();
+          clearInterval(retryInterval);
+        } catch {
+          // Keep retrying in background
+        }
+      }, 10000);
+      retryInterval.unref();
+    }
   }
 
   /**
