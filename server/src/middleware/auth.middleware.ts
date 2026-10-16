@@ -1,4 +1,4 @@
-import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import type { RequestHandler } from 'express';
 import type { Redis } from 'ioredis';
 
@@ -35,7 +35,7 @@ class AuthMiddleware {
         })
         .catch((error: unknown) => {
           if (error instanceof AppError) next(error);
-          else if (error instanceof JsonWebTokenError)
+          else if (error instanceof jwt.JsonWebTokenError)
             next(new AppError('Invalid or expired token', 401));
           else next(new AppError('Authentication service unavailable', 503, false));
         });
